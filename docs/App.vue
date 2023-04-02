@@ -146,6 +146,12 @@ export default {
           this.remainingTime = response.data.remaining_time;
           this.result = `You: ${response.data.player1_score}, Opponent: ${response.data.player2_score}`;
 
+          // set the class of the cell based on the player's turn                                                                                                                                                        
+          const cellClass = response.data.turn === 1 ? 'white' : 'black';
+          const cell = document.querySelector(`.board .row:nth-child(${row + 1}) .cell:nth-child(${col + 1})`);
+          cell.classList.add(cellClass);
+
+          // check for game over
           if (response.data.result !== null) {
             if (response.data.result === 0) {
               this.notification = "It's a tie!";
@@ -195,7 +201,16 @@ export default {
     createEmptyBoard() {
       const board = [];
       for (let i = 0; i < 15; i++) {
-        board.push(new Array(15).fill(0));
+        // create an empty row                                                                                                                                                                                           
+        const row = new Array(15).fill(null);
+
+        // set the background image for each cell in the row                                                                                                                                                             
+        row.forEach((_, j) => {
+          row[j] = 'assets/background.gif';
+        });
+
+        // add the row to the board                                                                                                                                                                                      
+        board.push(row);
       }
       return board;
     },
@@ -345,6 +360,14 @@ export default {
   max-width: 100%;
 }
 
+.board .cell.white {
+  background-image: url('assets/whiteStone.gif');
+}
+
+.board .cell.black {
+  background-image: url('assets/blackStone.gif');
+}
+
 .result-panel {
   display: flex;
   justify-content: center;
@@ -372,4 +395,5 @@ export default {
 .result-panel button:last-child {
   background-color: #f44336;
   /* red */
-}</style>
+}
+</style>
