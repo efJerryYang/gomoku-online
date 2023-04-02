@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -61,8 +63,9 @@ export default {
       matchingList: [],
       yourTurn: false,
       remainingTime: 30,
-      board: [], // Initialize board with empty array of 15x15
-      result: 'You: 0, Opponent: 0'
+      board: [], // Initialize board with empty array of 15x15                                                                                                                                 
+      result: 'You: 0, Opponent: 0',
+      gameId: null
     };
   },
   mounted() {
@@ -71,27 +74,132 @@ export default {
     }, 5000);
   },
   methods: {
-    pickUsername() {
-      // TODO: Implement pickUsername method
+    async pickUsername() {
+      try {
+        const response = await axios.post('/api/match', {
+          username: this.username
+        });
+        if (response.status === 200) {
+          this.notification = 'Successfully joined the matching list';
+          this.matchedPlayer = null;
+          this.yourTurn = false;
+        }
+      } catch (error) {
+        this.notification = error.response.data.msg;
+      }
     },
-    matchWithPlayer(player) {
-      // TODO: Implement matchWithPlayer method
+    async matchWithPlayer(player) {
+      try {
+        const response = await axios.post('/api/match', {
+          username: this.username,
+          opponent_id: player.id
+        });
+        if (response.status === 200) {
+          this.notification = 'Successfully matched with a player';
+          this.matchedPlayer = response.data;
+          this.board = response.data.board;
+          this.yourTurn = response.data.your_turn;
+          this.remainingTime = response.data.remaining_time;
+          this.gameId = response.data.id;
+        }
+      } catch (error) {
+        this.notification = error.response.data.msg;
+      }
     },
-    matchWithRandomPlayer() {
-      // TODO: Implement matchWithRandomPlayer method
+    async matchWithRandomPlayer() {
+      try {
+        const response = await axios.post('/api/match/dice', {
+          username: this.username
+        });
+        if (response.status === 200) {
+          this.notification = 'Successfully matched with a player';
+          this.matchedPlayer = response.data;
+          this.board = response.data.board;
+          this.yourTurn = response.data.your_turn;
+          this.remainingTime = response.data.remaining_time;
+          this.gameId = response.data.id;
+        }
+      } catch (error) {
+        this.notification = error.response.data.msg;
+      }
     },
-    refreshMatchingList() {
-      // TODO: Implement refreshMatchingList method
+    async refreshMatchingList() {
+      try {
+        const response = await axios.get('/api/match');
+        if (response.status === 200) {
+          this.matchingList = response.data;
+        }
+      } catch (error) {
+        console.error(error);
+      }
     },
-    placeStone(row, col) {
-      // TODO: Implement placeStone method
+    async placeStone(row, col) {
+      try {
+        const response = await axios.post('/api/game', {
+          id: this.gameId,
+          row,
+          col
+        });
+        if (response.status === 200) {
+          this.board = response.data.board;
+          this.yourTurn = response.data.your_turn;
+          this.remainingTime = response.data.remaining_time;
+          this.result = `You: ${response.data.player1_score}, Opponent: ${response.data.player2_score}`;
+
+          if (response.data.result !== null) {
+            if (response.data.result === 0) {
+              this.notification = "It's a tie!";
+            } else if (
+              (response.data.result === 1 && response.data.your_turn) ||
+              (response.data.result === 2 && !response.data.your_turn)
+            ) {
+              this.notification = 'You win!';
+            } else {
+              this.notification = 'You lose!';
+            }
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
     },
-    startNewRound() {
-      // TODO: Implement startNewRound method
+    async startNewRound() {
+      try {
+        await axios.post('/api/game', {
+          id: this.gameId,
+          clear: true
+        });
+        this.board = this.createEmptyBoard();
+        this.yourTurn = false;
+        this.remainingTime = 30;
+        this.result = 'You: 0, Opponent: 0';
+        this.notification = '';
+      } catch (error) {
+        console.error(error);
+      }
     },
-    exitGame() {
-      // TODO: Implement exitGame method
-    }
+    async exitGame() {
+      try {
+        await axios.post('/api/game/exit', {
+          id: this.gameId
+        });
+        this.matchedPlayer = null;
+        this.gameId = null;
+        this.board = this.createEmptyBoard();
+        this.result = 'You: 0, Opponent: 0';
+        this.notification = '';
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    createEmptyBoard() {
+      const board = [];
+      for (let i = 0; i < 15; i++) {
+        board.push(new Array(15).fill(0));
+      }
+      return board;
+    },
+    /* Add API calls for getting history list and history info */
   },
   computed: {
     /* Computed properties for calculating board-related data */
@@ -100,7 +208,6 @@ export default {
     /* Watchers for data changes */
   }
 };
-</script>
-
+</script>    
 <style> /* CSS styles for the app */
 </style>
