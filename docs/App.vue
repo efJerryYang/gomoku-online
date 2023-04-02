@@ -150,6 +150,8 @@ export default {
           const cellClass = response.data.turn === 1 ? 'white' : 'black';
           const cell = document.querySelector(`.board .row:nth-child(${row + 1}) .cell:nth-child(${col + 1})`);
           cell.classList.add(cellClass);
+          // const cellImage = response.data.player_turn === 1 ? 'assets/whiteStone.gif' : 'assets/blackStone.gif';
+          // this.board[row][col] = cellImage;
 
           // check for game over
           if (response.data.result !== null) {
@@ -201,16 +203,7 @@ export default {
     createEmptyBoard() {
       const board = [];
       for (let i = 0; i < 15; i++) {
-        // create an empty row                                                                                                                                                                                           
-        const row = new Array(15).fill(null);
-
-        // set the background image for each cell in the row                                                                                                                                                             
-        row.forEach((_, j) => {
-          row[j] = 'assets/background.gif';
-        });
-
-        // add the row to the board                                                                                                                                                                                      
-        board.push(row);
+        board.push(new Array(15).fill('assets/background.gif'));
       }
       return board;
     },
