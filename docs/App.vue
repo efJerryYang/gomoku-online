@@ -63,7 +63,7 @@ export default {
       matchingList: [],
       yourTurn: false,
       remainingTime: 30,
-      board: [], // Initialize board with empty array of 15x15                                                                                                                                 
+      board: [], // Initialize board with empty array of 15x15
       result: 'You: 0, Opponent: 0',
       gameId: null
     };
@@ -208,6 +208,168 @@ export default {
     /* Watchers for data changes */
   }
 };
-</script>    
-<style> /* CSS styles for the app */
-</style>
+</script>
+<style>
+/* CSS styles for the app */
+.app {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.home {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-box {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.input-box input[type="text"] {
+  font-size: 18px;
+  padding: 5px;
+  margin-right: 10px;
+  border: none;
+  outline: none;
+  border-bottom: 2px solid #ccc;
+}
+
+.input-box button {
+  font-size: 18px;
+  padding: 5px;
+  border-radius: 3px;
+  background-color: #4caf50;
+  /* green */
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.message {
+  font-size: 18px;
+  color: red;
+  margin-bottom: 10px;
+}
+
+.dice {
+  font-size: 18px;
+  padding: 5px;
+  border-radius: 3px;
+  background-color: #2196f3;
+  /* blue */
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.matching-list {
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.matching-list table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+
+.matching-list table td,
+.matching-list table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.matching-list table th {
+  background-color: #f2f2f2;
+}
+
+.matching-list table td button {
+  font-size: 14px;
+  padding: 5px;
+  border-radius: 3px;
+  background-color: #4caf50;
+  /* green */
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.status div {
+  font-size: 24px;
+  margin-right: 20px;
+}
+
+.status div.bold {
+  font-weight: bold;
+}
+
+.timer {
+  font-size: 30px;
+  margin-left: 20px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(15, 50px);
+  grid-template-rows: repeat(15, 50px);
+  margin-bottom: 20px;
+}
+
+.board .row {
+  display: flex;
+}
+
+.board .cell {
+  width: 50px;
+  height: 50px;
+}
+
+.board .cell img {
+  max-width: 100%;
+}
+
+.result-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.result {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.result-panel button {
+  font-size: 18px;
+  padding: 5px;
+  border-radius: 3px;
+  background-color: #4caf50;
+  /* green */
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+.result-panel button:last-child {
+  background-color: #f44336;
+  /* red */
+}</style>
