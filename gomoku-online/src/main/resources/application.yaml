@@ -4,7 +4,7 @@ server:
   address: localhost
   port: 8080
   servlet:
-      context-path: /api
+    context-path: /api
 spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
