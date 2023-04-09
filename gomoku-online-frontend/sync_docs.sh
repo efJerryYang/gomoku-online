@@ -1,1 +1,0 @@
-cp -a ../gomoku-online/docs/App.vue ./src/Tmp.vue
