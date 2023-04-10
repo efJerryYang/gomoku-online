@@ -6,6 +6,7 @@
         <input type="text" id="username" v-model="username">
         <button @click="pickUsername">Pick</button>
       </div>
+      <!-- TODO: Better alternatives, Messages Popup -->
       <div class="message">{{ notification }}</div>
       <div class="matching-list">
         <table class="matching-table">
@@ -19,14 +20,14 @@
           </thead>
           <tbody>
             <tr v-for="(player, index) in matchingList" :key="index">
-              <td>{{ player.waiting_time }}</td>
+              <td> {{ index + 1 }}</td>
+              <td>{{ formatWaitingTime(player.joinTime) }}</td>
               <td>{{ player.username }}</td>
               <td><button @click="matchWithPlayer(player)">Match</button></td>
               <td></td>
             </tr>
           </tbody>
         </table>
-
       </div>
     </div>
     <div class="game" v-else>
@@ -108,14 +109,14 @@ export default {
       try {
         const response = await axios.post('/api/match', {
           username: this.username,
-          opponent_id: player.id
+          opponentId: player.id
         });
         if (response.status === 200) {
           this.notification = 'Successfully matched with a player';
           this.matchedPlayer = response.data;
           this.board = response.data.board;
-          this.yourTurn = response.data.your_turn;
-          this.remainingTime = response.data.remaining_time;
+          this.yourTurn = response.data.yourTurn;
+          this.remainingTime = response.data.remainingTime;
           this.gameId = response.data.id;
         }
       } catch (error) {
@@ -131,8 +132,8 @@ export default {
           this.notification = 'Successfully matched with a player';
           this.matchedPlayer = response.data;
           this.board = response.data.board;
-          this.yourTurn = response.data.your_turn;
-          this.remainingTime = response.data.remaining_time;
+          this.yourTurn = response.data.yourTurn;
+          this.remainingTime = response.data.remainingTime;
           this.gameId = response.data.id;
         }
       } catch (error) {
@@ -149,6 +150,22 @@ export default {
         console.error(error);
       }
     },
+    formatWaitingTime(joinTime) {
+      const currentTime = new Date().getTime();
+      const waitingTime = Math.floor((currentTime - joinTime) / 1000);
+      if (waitingTime < 60) {
+        return `${waitingTime} s`;
+      } else if (waitingTime < 3600) {
+        const minutes = Math.floor(waitingTime / 60);
+        const seconds = waitingTime % 60;
+        return `${minutes} min ${seconds} s`;
+      } else {
+        const hours = Math.floor(waitingTime / 3600);
+        const minutes = Math.floor((waitingTime % 3600) / 60);
+        const seconds = waitingTime % 60;
+        return `${hours} h ${minutes} min ${seconds} s`
+      }
+    },
     async placeStone(row, col) {
       try {
         const response = await axios.post('/api/game', {
@@ -158,9 +175,9 @@ export default {
         });
         if (response.status === 200) {
           this.board = response.data.board;
-          this.yourTurn = response.data.your_turn;
-          this.remainingTime = response.data.remaining_time;
-          this.result = `You: ${response.data.player1_score}, Opponent: ${response.data.player2_score}`;
+          this.yourTurn = response.data.yourTurn;
+          this.remainingTime = response.data.remainingTime;
+          this.result = `You: ${response.data.player1Score}, Opponent: ${response.data.player2Score}`;
 
           // set the class of the cell based on the player's turn                                                                                                                                                        
           const cellClass = response.data.turn === 1 ? 'white' : 'black';
@@ -172,8 +189,8 @@ export default {
             if (response.data.result === 0) {
               this.notification = "It's a tie!";
             } else if (
-              (response.data.result === 1 && response.data.your_turn) ||
-              (response.data.result === 2 && !response.data.your_turn)
+              (response.data.result === 1 && response.data.yourTurn) ||
+              (response.data.result === 2 && !response.data.yourTurn)
             ) {
               this.notification = 'You win!';
             } else {
