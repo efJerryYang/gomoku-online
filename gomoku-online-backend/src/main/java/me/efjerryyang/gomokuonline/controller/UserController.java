@@ -1,6 +1,10 @@
 package me.efjerryyang.gomokuonline.controller;
 
 import io.jsonwebtoken.JwtException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import me.efjerryyang.gomokuonline.dto.GameDTO;
 import me.efjerryyang.gomokuonline.dto.MatchGetDTO;
 import me.efjerryyang.gomokuonline.dto.PickDTO;
 import me.efjerryyang.gomokuonline.entity.User;
@@ -22,29 +26,36 @@ public class UserController {
     private JwtService jwtService;
 
     @PostMapping("/pick")
-    public ResponseEntity<String> pickUsername(@RequestHeader("Authorization") String token, @RequestBody PickDTO pickDTO) {
+    public ResponseEntity<Object> pickUsername(@RequestHeader("Authorization") String token, @RequestBody PickDTO pickDTO) {
         try {
             String clientId = jwtService.getClientIdFromToken(token);
             if (pickDTO == null || pickDTO.getUsername() == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please enter a username");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponsePick(null, "Username cannot be null"));
 
             }
             String username = pickDTO.getUsername().trim();
             if (username.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be all spaces");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponsePick(null, "Username cannot be all spaces"));
             }
             User newUser = userService.pickUsername(username, clientId);
             if (newUser != null) {
                 userService.updateWaitingList(newUser);
-                return ResponseEntity.ok("Successfully joined the matching list");
+                return ResponseEntity.ok().body(new ResponsePick(newUser.getId(), "Successfully joined the matching list"));
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to join the matching list");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponsePick(null, "Failed to join the matching list"));
             }
 
         } catch (JwtException | IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponsePick(null, "Invalid token"));
         }
+    }
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private class ResponsePick {
+        private Long id;
+        private String info;
     }
 
     // TODO: Offline user detection
@@ -53,17 +64,18 @@ public class UserController {
         List<MatchGetDTO> matchGetDTOList = userService.getWaitingList();
         return ResponseEntity.ok(matchGetDTOList);
     }
-//
+
 //    @PostMapping("/match")
-//    public ResponseEntity<GameDTO> matchWithPlayer(@RequestBody MatchGetDTO matchDTO) {
-//        GameDTO gameDTO = userService.matchWithPlayer(matchDTO.getUsername(), matchDTO.getOpponentId());
+//    public ResponseEntity<GameDTO> matchWithPlayer(@RequestBody MatchPostDTO matchDTO) {
+//        GameDTO gameDTO = userService.matchWithPlayer(matchDTO.getId(), matchDTO.getOpponentId());
 //        if (gameDTO == null) {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 //        } else {
 //            return ResponseEntity.ok(gameDTO);
 //        }
 //    }
-//
+
+    //
 //    @PostMapping("/match/dice")
 //    public ResponseEntity<GameDTO> matchWithRandomPlayer(@RequestBody PickDTO pickDTO) {
 //        GameDTO gameDTO = userService.matchWithRandomPlayer(pickDTO.getUsername());
@@ -73,4 +85,5 @@ public class UserController {
 //            return ResponseEntity.ok(gameDTO);
 //        }
 //    }
+
 }

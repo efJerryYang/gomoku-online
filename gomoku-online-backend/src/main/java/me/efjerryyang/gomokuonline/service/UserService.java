@@ -71,6 +71,7 @@ public class UserService {
         newUser.setClientId(clientId);
         removeClient(clientId);
         userList.add(newUser);
+        System.out.println("User " + username + " (" + newUser.getId() + ")" + " added to user list with clientId " + clientId);
         return newUser;
     }
 }
