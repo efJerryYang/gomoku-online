@@ -76,6 +76,7 @@ export default {
   methods: {
     async refreshMatchingList() {
       try {
+        // const token = await this.getJwtToken();
         const response = await axios.get('/api/match');
         if (response.status === 200) {
           this.matchingList = response.data;
@@ -102,10 +103,11 @@ export default {
     },
     async getJwtToken() {
       let token = localStorage.getItem('jwtToken');
+      let tmpId = Math.random().toString(36).substring(2);
       if (!token) {
         try {
           const response = await axios.post('/api/token', {
-            tmpId: Math.random().toString(36).substring(2)
+            tmpId: tmpId
           });
           if (response.status === 200) {
             token = response.data.token;
