@@ -24,7 +24,7 @@ public class UserController {
     @PostMapping("/pick")
     public ResponseEntity<String> pickUsername(@RequestHeader("Authorization") String token, @RequestBody PickDTO pickDTO) {
         try {
-            String userId = jwtService.getTmpIdFromToken(token);
+            String clientId = jwtService.getClientIdFromToken(token);
             if (pickDTO == null || pickDTO.getUsername() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please enter a username");
 
@@ -33,7 +33,7 @@ public class UserController {
             if (username.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be all spaces");
             }
-            User newUser = userService.pickUsername(username, userId);
+            User newUser = userService.pickUsername(username, clientId);
             if (newUser != null) {
                 userService.updateWaitingList(newUser);
                 return ResponseEntity.ok("Successfully joined the matching list");

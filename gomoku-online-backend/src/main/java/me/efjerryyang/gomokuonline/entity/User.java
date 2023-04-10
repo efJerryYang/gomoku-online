@@ -11,5 +11,6 @@ public class User {
     private String username;
     private Long createTime;
     private Long id;
+    private String clientId;
     private Integer status;
 }
