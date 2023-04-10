@@ -50,9 +50,17 @@ public class UserService {
             waitingList.add(matchGetDTO);
         }
     }
+
     public void removeClient(String clientId) {
-        userList.removeIf(user -> user.getClientId().equals(clientId));
+        // First get the userId with specific clientID, then remove the user with this userId from both userlist and waitinglist
+        Long userId = userList.stream().filter(user -> user.getClientId().equals(clientId)).map(User::getId).findFirst().orElse(null);
+        if (userId != null) {
+            System.out.println("Removing client " + clientId + " with userId " + userId);
+            userList.removeIf(user -> user.getId().equals(userId));
+            waitingList.removeIf(matchGetDTO -> matchGetDTO.getId().equals(userId));
+        }
     }
+
     public User pickUsername(String username, String clientId) {
         User newUser = new User();
         // Use generated uuid as id
