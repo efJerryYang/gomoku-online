@@ -1,15 +1,17 @@
 package me.efjerryyang.gomokuonline.controller;
 
-import me.efjerryyang.gomokuonline.dto.GameDTO;
 import me.efjerryyang.gomokuonline.dto.MatchDTO;
 import me.efjerryyang.gomokuonline.dto.UserDTO;
 import me.efjerryyang.gomokuonline.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class UserController {
@@ -36,6 +38,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to join the matching list");
         }
 
+    }
+
+    @GetMapping("/match")
+    public ResponseEntity<List<MatchDTO>> getWaitingList() {
+        List<MatchDTO> matchDTOList = userService.getWaitingList();
+        return ResponseEntity.ok(matchDTOList);
     }
 //
 //    @PostMapping("/match")

@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatchDTO {
-    private Integer waitingTime;
+    private Long joinTime;
     private String username;
-    private Integer id;
+    private Long id;
 
 }
