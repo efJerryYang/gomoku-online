@@ -16,7 +16,7 @@ public class UsernameController {
         this.username = username;
     }
 
-    @PostMapping("/api/pick")
+    @PostMapping("/pick")
     public String pickUsername(String username) {
         System.out.println("Username picked: " + username);
         setUsername(username);
