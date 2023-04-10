@@ -24,7 +24,6 @@
               <td>{{ formatWaitingTime(player.joinTime) }}</td>
               <td>{{ player.username }}</td>
               <td><button @click="matchWithPlayer(player)">Match</button></td>
-              <td></td>
             </tr>
           </tbody>
         </table>
@@ -72,7 +71,7 @@ export default {
   mounted() {
     setInterval(() => {
       this.refreshMatchingList();
-    }, 5000);
+    }, 1000);
   },
   methods: {
     async pickUsername() {
@@ -151,8 +150,8 @@ export default {
       }
     },
     formatWaitingTime(joinTime) {
-      const currentTime = new Date().getTime();
-      const waitingTime = Math.floor((currentTime - joinTime) / 1000);
+      const currentTime = new Date().getTime() / 1000;
+      const waitingTime = Math.floor((currentTime - joinTime));
       if (waitingTime < 60) {
         return `${waitingTime} s`;
       } else if (waitingTime < 3600) {
