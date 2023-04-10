@@ -79,7 +79,7 @@ export default {
         // const token = await this.getJwtToken();
         const response = await axios.get('/api/match');
         if (response.status === 200) {
-          this.matchingList = response.data;
+          this.matchingList = response.data.reverse();
         }
       } catch (error) {
         console.error(error);
@@ -142,7 +142,8 @@ export default {
         });
         // if no response is received, the request failed
         if (response.status === 200) {
-          this.notification = 'Successfully joined the matching list: ' + this.username;
+          this.id = response.data.id;
+          this.notification = 'Successfully joined the matching list: ' + this.username + ' (' + this.id + ')';
           this.matchedPlayer = null;
           this.yourTurn = false;
         }
@@ -159,7 +160,7 @@ export default {
       try {
         const token = await this.getJwtToken();
         const response = await axios.post('/api/match', {
-          username: this.username,
+          userId: this.userId,
           opponentId: player.id
         }, {
           headers: {
