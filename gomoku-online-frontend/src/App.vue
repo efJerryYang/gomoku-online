@@ -60,6 +60,7 @@ export default {
   data() {
     return {
       username: '',
+      id: null,
       matchedPlayer: null,
       notification: '',
       matchingList: [],
@@ -73,6 +74,12 @@ export default {
   mounted() {
     setInterval(() => {
       this.refreshMatchingList();
+    }, 1000);
+    // check matching status
+    setInterval(() => {
+      if (this.id) {
+        this.checkMatchingStatus();
+      }
     }, 1000);
   },
   methods: {
@@ -101,6 +108,25 @@ export default {
         const minutes = Math.floor((waitingTime % 3600) / 60);
         const seconds = waitingTime % 60;
         return `${hours} h ${minutes} min ${seconds} s`
+      }
+    },
+    // checkMatchingStatus
+    async checkMatchingStatus() {
+      try {
+        const token = await this.getJwtToken();
+        const response = await axios.get('/api/matching', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        if (response.status === 200) {
+          if (response.data.info.toLowerCase() === 'matching') {
+            this.matchedPlayer = response.data.matchedPlayer;
+            this.notification = 'Matched with ' + this.matchedPlayer.username;
+          }
+        }
+      } catch (error) {
+        console.error(error);
       }
     },
     async getJwtToken() {
@@ -162,7 +188,7 @@ export default {
       try {
         const token = await this.getJwtToken();
         const response = await axios.post('/api/match', {
-          userId: this.userId,
+          userId: this.id,
           opponentId: player.id
         }, {
           headers: {
@@ -172,6 +198,7 @@ export default {
         if (response.status === 200) {
           this.notification = 'Successfully matched with a player';
           this.matchedPlayer = response.data;
+          console.log(response.data);
           this.board = response.data.board;
           this.yourTurn = response.data.yourTurn;
           this.remainingTime = response.data.remainingTime;

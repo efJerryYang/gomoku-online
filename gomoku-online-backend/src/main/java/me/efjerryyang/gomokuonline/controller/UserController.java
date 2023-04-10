@@ -75,14 +75,23 @@ public class UserController {
 
     @GetMapping("/matching")
     public ResponseEntity<ResponseMatching> getMatchingStatus(@RequestHeader("Authorization") String token) {
-        User user = userService.getUserByClientId(jwtService.getClientIdFromToken(token));
+
+        String clientId = jwtService.getClientIdFromToken(token);
+        System.out.println("GET: matching (clientId=" + clientId + ")");
+        User user = userService.getUserByClientId(clientId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         // Get game by user id
         Game game = gameService.getGameByPlayerId(user.getId());
+        if (game == null) {
+            return ResponseEntity.ok(new ResponseMatching(null, "No matching"));
+        }
         Player opponent = game.getOpponentByPlayerId(user.getId());
         if (opponent == null) {
-            return ResponseEntity.ok(new ResponseMatching(null, null, "No matching"));
+            return ResponseEntity.ok(new ResponseMatching(null, "No matching"));
         } else {
-            return ResponseEntity.ok(new ResponseMatching(opponent.getId(), opponent.getUsername(), "Matching"));
+            return ResponseEntity.ok(new ResponseMatching(opponent, "Matching"));
         }
     }
 
@@ -90,8 +99,7 @@ public class UserController {
     @NoArgsConstructor
     @AllArgsConstructor
     private class ResponseMatching {
-        private Long opponentId;
-        private String opponentUsername;
+        private Player matchedPlayer;
         private String info;
     }
 
@@ -101,6 +109,7 @@ public class UserController {
         if (matchDTO.getUserId() == null || matchDTO.getOpponentId() == null || matchDTO.getUserId().equals(matchDTO.getOpponentId())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+
         Game game = gameService.getGameByPlayerId(matchDTO.getUserId());
         if (game != null && game.getStatus().equals(Constant.GAME_STATUS_PENDING)) {
             // another player checked the matching status first
