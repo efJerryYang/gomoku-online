@@ -1,7 +1,7 @@
 package me.efjerryyang.gomokuonline.service;
 
 import me.efjerryyang.gomokuonline.Constant;
-import me.efjerryyang.gomokuonline.dto.MatchDTO;
+import me.efjerryyang.gomokuonline.dto.MatchGetDTO;
 import me.efjerryyang.gomokuonline.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public class UserService {
     private final List<User> userList;
-    private final List<MatchDTO> waitingList;
+    private final List<MatchGetDTO> waitingList;
 
     public UserService() {
         userList = new ArrayList<>();
@@ -36,18 +36,18 @@ public class UserService {
         }
     }
 
-    public List<MatchDTO> getWaitingList() {
+    public List<MatchGetDTO> getWaitingList() {
         return waitingList;
     }
 
     public void updateWaitingList(User user) {
         // if user not in waiting list and status is waiting, add to waiting list
-        if (waitingList.stream().noneMatch(matchDTO -> matchDTO.getId().equals(user.getId())) && user.getStatus() == Constant.USER_STATUS_WAITING) {
-            MatchDTO matchDTO = new MatchDTO();
-            matchDTO.setUsername(user.getUsername());
-            matchDTO.setId(user.getId());
-            matchDTO.setJoinTime(System.currentTimeMillis() / 1000);
-            waitingList.add(matchDTO);
+        if (waitingList.stream().noneMatch(matchGetDTO -> matchGetDTO.getId().equals(user.getId())) && user.getStatus() == Constant.USER_STATUS_WAITING) {
+            MatchGetDTO matchGetDTO = new MatchGetDTO();
+            matchGetDTO.setUsername(user.getUsername());
+            matchGetDTO.setId(user.getId());
+            matchGetDTO.setJoinTime(System.currentTimeMillis() / 1000);
+            waitingList.add(matchGetDTO);
         }
     }
 
