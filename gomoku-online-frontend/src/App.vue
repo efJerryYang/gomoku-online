@@ -74,71 +74,6 @@ export default {
     }, 1000);
   },
   methods: {
-    async pickUsername() {
-      if (!this.username) {
-        this.notification = 'Please enter a username';
-        return;
-      }
-      if (/^\s+$/.test(this.username)) {
-        this.notification = 'Username cannot be all spaces';
-        return;
-      }
-
-      this.username = this.username.trim();
-      console.log("logging:" + this.username);
-      try {
-        const response = await axios.post('/api/pick', {
-          username: this.username
-        });
-        // if no response is received, the request failed
-        if (response.status === 200) {
-          this.notification = 'Successfully joined the matching list: ' + this.username;
-          this.matchedPlayer = null;
-          this.yourTurn = false;
-        }
-        else {
-          this.notification = 'Failed to join the matching list';
-        }
-      } catch (error) {
-        this.notification = error.response.data.msg;
-      }
-      console.log("logging:" + response);
-    },
-    async matchWithPlayer(player) {
-      try {
-        const response = await axios.post('/api/match', {
-          username: this.username,
-          opponentId: player.id
-        });
-        if (response.status === 200) {
-          this.notification = 'Successfully matched with a player';
-          this.matchedPlayer = response.data;
-          this.board = response.data.board;
-          this.yourTurn = response.data.yourTurn;
-          this.remainingTime = response.data.remainingTime;
-          this.gameId = response.data.id;
-        }
-      } catch (error) {
-        this.notification = error.response.data.msg;
-      }
-    },
-    async matchWithRandomPlayer() {
-      try {
-        const response = await axios.post('/api/match/dice', {
-          username: this.username
-        });
-        if (response.status === 200) {
-          this.notification = 'Successfully matched with a player';
-          this.matchedPlayer = response.data;
-          this.board = response.data.board;
-          this.yourTurn = response.data.yourTurn;
-          this.remainingTime = response.data.remainingTime;
-          this.gameId = response.data.id;
-        }
-      } catch (error) {
-        this.notification = error.response.data.msg;
-      }
-    },
     async refreshMatchingList() {
       try {
         const response = await axios.get('/api/match');
@@ -165,12 +100,112 @@ export default {
         return `${hours} h ${minutes} min ${seconds} s`
       }
     },
+    async getJwtToken() {
+      let token = localStorage.getItem('jwtToken');
+      if (!token) {
+        try {
+          const response = await axios.post('/api/token');
+          token = response.data.token;
+          localStorage.setItem('jwtToken', token);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      return token;
+    },
+
+    async pickUsername() {
+      if (!this.username) {
+        this.notification = 'Please enter a username';
+        return;
+      }
+      if (/^\s+$/.test(this.username)) {
+        this.notification = 'Username cannot be all spaces';
+        return;
+      }
+      this.username = this.username.trim();
+      console.log("logging:" + this.username);
+      try {
+        const token = await this.getJwtToken();
+        const response = await axios.post('/api/pick', {
+          username: this.username
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        // if no response is received, the request failed
+        if (response.status === 200) {
+          this.notification = 'Successfully joined the matching list: ' + this.username;
+          this.matchedPlayer = null;
+          this.yourTurn = false;
+        }
+        else {
+          this.notification = 'Failed to join the matching list';
+        }
+      } catch (error) {
+        this.notification = error.response.data.msg;
+      }
+      console.log("logging:" + response);
+    },
+
+    async matchWithPlayer(player) {
+      try {
+        const token = await this.getJwtToken();
+        const response = await axios.post('/api/match', {
+          username: this.username,
+          opponentId: player.id
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        if (response.status === 200) {
+          this.notification = 'Successfully matched with a player';
+          this.matchedPlayer = response.data;
+          this.board = response.data.board;
+          this.yourTurn = response.data.yourTurn;
+          this.remainingTime = response.data.remainingTime;
+          this.gameId = response.data.id;
+        }
+      } catch (error) {
+        this.notification = error.response.data.msg;
+      }
+    },
+    async matchWithRandomPlayer() {
+      try {
+        const token = await this.getJwtToken();
+        const response = await axios.post('/api/match/dice', {
+          username: this.username
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        if (response.status === 200) {
+          this.notification = 'Successfully matched with a player';
+          this.matchedPlayer = response.data;
+          this.board = response.data.board;
+          this.yourTurn = response.data.yourTurn;
+          this.remainingTime = response.data.remainingTime;
+          this.gameId = response.data.id;
+        }
+      } catch (error) {
+        this.notification = error.response.data.msg;
+      }
+    },
+
     async placeStone(row, col) {
       try {
+        const token = await this.getJwtToken();
         const response = await axios.post('/api/game', {
           id: this.gameId,
           row,
           col
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
         if (response.status === 200) {
           this.board = response.data.board;
@@ -203,29 +238,44 @@ export default {
     },
     async startNewRound() {
       try {
-        await axios.post('/api/game', {
+        const token = await this.getJwtToken();
+        const response = await axios.post('/api/game', {
           id: this.gameId,
           clear: true
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
-        this.board = this.createEmptyBoard();
-        this.yourTurn = false;
-        this.remainingTime = 30;
-        this.result = 'You: 0, Opponent: 0';
-        this.notification = '';
+        if (response.status === 200) {
+          this.board = response.data.board;
+          this.yourTurn = response.data.yourTurn;
+          this.remainingTime = response.data.remainingTime;
+          this.result = `You: ${response.data.player1Score}, Opponent: ${response.data.player2Score}`;
+          this.notification = '';
+        }
       } catch (error) {
         console.error(error);
       }
     },
     async exitGame() {
       try {
-        await axios.post('/api/game/exit', {
+        const token = await this.getJwtToken();
+        const response = await axios.post('/api/game/exit', {
           id: this.gameId
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
-        this.matchedPlayer = null;
-        this.gameId = null;
-        this.board = this.createEmptyBoard();
-        this.result = 'You: 0, Opponent: 0';
-        this.notification = '';
+        if (response.status === 200) {
+          this.notification = 'Successfully exited the game';
+          this.matchedPlayer = null;
+          this.gameId = null;
+          this.board = this.createEmptyBoard();
+          this.result = 'You: 0, Opponent: 0';
+          this.notification = '';
+        }
       } catch (error) {
         console.error(error);
       }
