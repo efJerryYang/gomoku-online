@@ -23,7 +23,9 @@
               <td> {{ index + 1 }}</td>
               <td>{{ formatWaitingTime(player.joinTime) }}</td>
               <td>{{ player.username }}</td>
-              <td><button @click="matchWithPlayer(player)">Match</button></td>
+              <td>
+                <button v-if="this.id !== player.id" @click="matchWithPlayer(player)">Match</button>
+              </td>
             </tr>
           </tbody>
         </table>

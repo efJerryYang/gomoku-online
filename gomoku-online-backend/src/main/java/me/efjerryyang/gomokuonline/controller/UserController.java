@@ -4,10 +4,15 @@ import io.jsonwebtoken.JwtException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.efjerryyang.gomokuonline.Constant;
 import me.efjerryyang.gomokuonline.dto.GameDTO;
 import me.efjerryyang.gomokuonline.dto.MatchGetDTO;
+import me.efjerryyang.gomokuonline.dto.MatchPostDTO;
 import me.efjerryyang.gomokuonline.dto.PickDTO;
+import me.efjerryyang.gomokuonline.entity.Game;
+import me.efjerryyang.gomokuonline.entity.Player;
 import me.efjerryyang.gomokuonline.entity.User;
+import me.efjerryyang.gomokuonline.service.GameService;
 import me.efjerryyang.gomokuonline.service.JwtService;
 import me.efjerryyang.gomokuonline.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +29,9 @@ public class UserController {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private GameService gameService;
 
     @PostMapping("/pick")
     public ResponseEntity<Object> pickUsername(@RequestHeader("Authorization") String token, @RequestBody PickDTO pickDTO) {
@@ -65,15 +73,50 @@ public class UserController {
         return ResponseEntity.ok(matchGetDTOList);
     }
 
-//    @PostMapping("/match")
-//    public ResponseEntity<GameDTO> matchWithPlayer(@RequestBody MatchPostDTO matchDTO) {
-//        GameDTO gameDTO = userService.matchWithPlayer(matchDTO.getId(), matchDTO.getOpponentId());
-//        if (gameDTO == null) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        } else {
-//            return ResponseEntity.ok(gameDTO);
-//        }
-//    }
+    @GetMapping("/matching")
+    public ResponseEntity<ResponseMatching> getMatchingStatus(@RequestHeader("Authorization") String token) {
+        User user = userService.getUserByClientId(jwtService.getClientIdFromToken(token));
+        // Get game by user id
+        Game game = gameService.getGameByPlayerId(user.getId());
+        Player opponent = game.getOpponentByPlayerId(user.getId());
+        if (opponent == null) {
+            return ResponseEntity.ok(new ResponseMatching(null, null, "No matching"));
+        } else {
+            return ResponseEntity.ok(new ResponseMatching(opponent.getId(), opponent.getUsername(), "Matching"));
+        }
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private class ResponseMatching {
+        private Long opponentId;
+        private String opponentUsername;
+        private String info;
+    }
+
+    // TODO: current possibility of duplicated userid or gameid
+    @PostMapping("/match")
+    public ResponseEntity<GameDTO> matchWithPlayer(@RequestBody MatchPostDTO matchDTO) {
+        if (matchDTO.getUserId() == null || matchDTO.getOpponentId() == null || matchDTO.getUserId().equals(matchDTO.getOpponentId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        Game game = gameService.getGameByPlayerId(matchDTO.getUserId());
+        if (game != null && game.getStatus().equals(Constant.GAME_STATUS_PENDING)) {
+            // another player checked the matching status first
+            gameService.updateGameStatus(game.getId(), Constant.GAME_STATUS_PLAYING);
+            return ResponseEntity.ok(new GameDTO(game));
+        } else if (game != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        game = userService.matchPlayers(matchDTO.getUserId(), matchDTO.getOpponentId());
+        gameService.addGame(game);
+        if (game == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } else {
+            return ResponseEntity.ok(new GameDTO(game));
+        }
+    }
 
     //
 //    @PostMapping("/match/dice")

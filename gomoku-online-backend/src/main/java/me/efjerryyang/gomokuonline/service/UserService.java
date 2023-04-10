@@ -1,7 +1,10 @@
 package me.efjerryyang.gomokuonline.service;
 
 import me.efjerryyang.gomokuonline.Constant;
+import me.efjerryyang.gomokuonline.dto.GameDTO;
 import me.efjerryyang.gomokuonline.dto.MatchGetDTO;
+import me.efjerryyang.gomokuonline.entity.Game;
+import me.efjerryyang.gomokuonline.entity.Player;
 import me.efjerryyang.gomokuonline.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +38,12 @@ public class UserService {
             updateWaitingList(user);
         }
     }
-
+    public User getUserByClientId(String clientId) {
+        return userList.stream().filter(user -> user.getClientId().equals(clientId)).findFirst().orElse(null);
+    }
+    public User getUserById(Long id) {
+        return userList.stream().filter(user -> user.getId().equals(id)).findFirst().orElse(null);
+    }
     public List<MatchGetDTO> getWaitingList() {
         return waitingList;
     }
@@ -73,5 +81,30 @@ public class UserService {
         userList.add(newUser);
         System.out.println("User " + username + " (" + newUser.getId() + ")" + " added to user list with clientId " + clientId);
         return newUser;
+    }
+
+    public Game matchPlayers(Long playerId1, Long playerId2) {
+        if (playerId1 == null || playerId2 == null || playerId1.equals(playerId2)) {
+            return null;
+        }
+        // remove from waiting list
+        waitingList.removeIf(matchGetDTO -> matchGetDTO.getId().equals(playerId1));
+        waitingList.removeIf(matchGetDTO -> matchGetDTO.getId().equals(playerId2));
+        // change status to playing
+        userList.stream().filter(user -> user.getId().equals(playerId1)).findFirst().ifPresent(user -> user.setStatus(Constant.USER_STATUS_PLAYING));
+        userList.stream().filter(user -> user.getId().equals(playerId2)).findFirst().ifPresent(user -> user.setStatus(Constant.USER_STATUS_PLAYING));
+
+        Game newGame = new Game();
+        newGame.setId((long) (Math.random() * 1_0000_0000));
+        User user1 = getUserById(playerId1);
+        User user2 = getUserById(playerId2);
+        newGame.setPlayer1(new Player(user1.getUsername(), user1.getId()));
+        newGame.setPlayer2(new Player(user2.getUsername(), user2.getId()));
+        newGame.setTurn(1);
+        newGame.setBoard(new Integer[Constant.BOARD_SIZE][Constant.BOARD_SIZE]);
+        newGame.setStatus(Constant.GAME_STATUS_PENDING);
+        newGame.setWhoFirst((int) (Math.random() * 2) + 1); // (int) [1.0, 3.0) => 1 or 2
+        newGame.setMoves(new ArrayList<>());
+        return newGame;
     }
 }
