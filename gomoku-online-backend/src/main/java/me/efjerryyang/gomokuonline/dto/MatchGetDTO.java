@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MatchDTO {
+public class MatchGetDTO {
     private Long joinTime;
     private String username;
     private Long id;

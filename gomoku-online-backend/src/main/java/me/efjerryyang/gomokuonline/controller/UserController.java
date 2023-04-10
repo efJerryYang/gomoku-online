@@ -1,6 +1,6 @@
 package me.efjerryyang.gomokuonline.controller;
 
-import me.efjerryyang.gomokuonline.dto.MatchDTO;
+import me.efjerryyang.gomokuonline.dto.MatchGetDTO;
 import me.efjerryyang.gomokuonline.dto.PickDTO;
 import me.efjerryyang.gomokuonline.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,13 +41,13 @@ public class UserController {
     }
 
     @GetMapping("/match")
-    public ResponseEntity<List<MatchDTO>> getWaitingList() {
-        List<MatchDTO> matchDTOList = userService.getWaitingList();
-        return ResponseEntity.ok(matchDTOList);
+    public ResponseEntity<List<MatchGetDTO>> getWaitingList() {
+        List<MatchGetDTO> matchGetDTOList = userService.getWaitingList();
+        return ResponseEntity.ok(matchGetDTOList);
     }
 //
 //    @PostMapping("/match")
-//    public ResponseEntity<GameDTO> matchWithPlayer(@RequestBody MatchDTO matchDTO) {
+//    public ResponseEntity<GameDTO> matchWithPlayer(@RequestBody MatchGetDTO matchDTO) {
 //        GameDTO gameDTO = userService.matchWithPlayer(matchDTO.getUsername(), matchDTO.getOpponentId());
 //        if (gameDTO == null) {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
