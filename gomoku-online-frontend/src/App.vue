@@ -104,9 +104,13 @@ export default {
       let token = localStorage.getItem('jwtToken');
       if (!token) {
         try {
-          const response = await axios.post('/api/token');
-          token = response.data.token;
-          localStorage.setItem('jwtToken', token);
+          const response = await axios.post('/api/token', {
+            tmpId: Math.random().toString(36).substring(2)
+          });
+          if (response.status === 200) {
+            token = response.data.token;
+            localStorage.setItem('jwtToken', token);
+          }
         } catch (error) {
           console.error(error);
         }
