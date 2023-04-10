@@ -103,11 +103,11 @@ export default {
     },
     async getJwtToken() {
       let token = localStorage.getItem('jwtToken');
-      let tmpId = Math.random().toString(36).substring(2);
+      let clientId = Math.random().toString(36).substring(2);
       if (!token) {
         try {
           const response = await axios.post('/api/token', {
-            tmpId: tmpId
+            clientId: clientId
           });
           if (response.status === 200) {
             token = response.data.token;

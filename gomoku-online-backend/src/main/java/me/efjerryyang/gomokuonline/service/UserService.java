@@ -15,15 +15,15 @@ public class UserService {
 
     public UserService() {
         userList = new ArrayList<>();
-        initUserList();
         waitingList = new ArrayList<>();
+        initUserList();
         initWaitingList();
     }
 
     private void initUserList() {
         List<String> usernameList = List.of("testUser1", "testUser2", "testUser3", "testUser4", "testUser5");
         for (String username : usernameList) {
-            if (pickUsername(username, "test") != null) {
+            if (pickUsername(username, username) != null) {
                 System.out.println("User " + username + " added to waiting list");
             }
         }
@@ -50,7 +50,9 @@ public class UserService {
             waitingList.add(matchGetDTO);
         }
     }
-
+    public void removeClient(String clientId) {
+        userList.removeIf(user -> user.getClientId().equals(clientId));
+    }
     public User pickUsername(String username, String clientId) {
         User newUser = new User();
         // Use generated uuid as id
@@ -58,6 +60,8 @@ public class UserService {
         newUser.setUsername(username);
         newUser.setStatus(Constant.USER_STATUS_WAITING);
         newUser.setCreateTime((System.currentTimeMillis() / 1000));
+        newUser.setClientId(clientId);
+        removeClient(clientId);
         userList.add(newUser);
         return newUser;
     }
