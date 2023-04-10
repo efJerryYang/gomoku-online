@@ -13,4 +13,15 @@ public class Constant {
     public static final long HOUR_TO_SECONDS = 60 * MINUTE_TO_SECONDS;
     public static final long DAY_TO_SECONDS = 24 * HOUR_TO_SECONDS;
     public static final long WEEK_TO_SECONDS = 7 * DAY_TO_SECONDS;
+
+    // Board info
+    public static final int BOARD_SIZE = 10;
+    public static final int BACKGROUND_CELL = 0;
+    public static final int WHITE_CELL = 1;
+    public static final int BLACK_CELL = 2;
+
+    // Game info
+    public static final int GAME_STATUS_PENDING = 0;
+    public static final int GAME_STATUS_PLAYING = 1;
+    public static final int GAME_STATUS_FINISHED = 2;
 }

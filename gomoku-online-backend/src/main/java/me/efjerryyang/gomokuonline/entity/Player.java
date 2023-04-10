@@ -1,4 +1,4 @@
-package me.efjerryyang.gomokuonline.dto;
+package me.efjerryyang.gomokuonline.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MatchPostDTO {
-    private Long userId;
-    private Long opponentId;
+public class Player {
+    private String username;
+    private Long id;
 }
