@@ -23,7 +23,7 @@ public class UserService {
     private void initUserList() {
         List<String> usernameList = List.of("testUser1", "testUser2", "testUser3", "testUser4", "testUser5");
         for (String username : usernameList) {
-            if (pickUsername(username)) {
+            if (pickUsername(username, "test") != null) {
                 System.out.println("User " + username + " added to waiting list");
             }
         }
@@ -51,7 +51,7 @@ public class UserService {
         }
     }
 
-    public boolean pickUsername(String username) {
+    public User pickUsername(String username, String clientId) {
         User newUser = new User();
         // Use generated uuid as id
         newUser.setId((long) (Math.random() * 1_0000_0000));
@@ -59,6 +59,6 @@ public class UserService {
         newUser.setStatus(Constant.USER_STATUS_WAITING);
         newUser.setCreateTime((System.currentTimeMillis() / 1000));
         userList.add(newUser);
-        return true;
+        return newUser;
     }
 }
