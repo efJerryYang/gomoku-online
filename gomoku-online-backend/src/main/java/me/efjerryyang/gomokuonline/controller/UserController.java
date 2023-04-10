@@ -1,7 +1,7 @@
 package me.efjerryyang.gomokuonline.controller;
 
 import me.efjerryyang.gomokuonline.dto.MatchDTO;
-import me.efjerryyang.gomokuonline.dto.UserDTO;
+import me.efjerryyang.gomokuonline.dto.PickDTO;
 import me.efjerryyang.gomokuonline.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,13 +19,13 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/pick")
-    public ResponseEntity<String> pickUsername(@RequestBody UserDTO userDTO) {
-        if (userDTO == null || userDTO.getUsername() == null) {
+    public ResponseEntity<String> pickUsername(@RequestBody PickDTO pickDTO) {
+        if (pickDTO == null || pickDTO.getUsername() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please enter a username");
 
         }
 
-        String username = userDTO.getUsername().trim();
+        String username = pickDTO.getUsername().trim();
         if (username.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be all spaces");
         }
@@ -57,8 +57,8 @@ public class UserController {
 //    }
 //
 //    @PostMapping("/match/dice")
-//    public ResponseEntity<GameDTO> matchWithRandomPlayer(@RequestBody UserDTO userDTO) {
-//        GameDTO gameDTO = userService.matchWithRandomPlayer(userDTO.getUsername());
+//    public ResponseEntity<GameDTO> matchWithRandomPlayer(@RequestBody PickDTO pickDTO) {
+//        GameDTO gameDTO = userService.matchWithRandomPlayer(pickDTO.getUsername());
 //        if (gameDTO == null) {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 //        } else {
