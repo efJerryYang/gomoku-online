@@ -75,18 +75,34 @@ export default {
   },
   methods: {
     async pickUsername() {
+      if (!this.username) {
+        this.notification = 'Please enter a username';
+        return;
+      }
+      if (/^\s+$/.test(this.username)) {
+        this.notification = 'Username cannot be all spaces';
+        return;
+      }
+
+      this.username = this.username.trim();
+      console.log("logging:" + this.username);
       try {
         const response = await axios.post('/api/pick', {
           username: this.username
         });
+        // if no response is received, the request failed
         if (response.status === 200) {
-          this.notification = 'Successfully joined the matching list';
+          this.notification = 'Successfully joined the matching list: ' + this.username;
           this.matchedPlayer = null;
           this.yourTurn = false;
+        }
+        else {
+          this.notification = 'Failed to join the matching list';
         }
       } catch (error) {
         this.notification = error.response.data.msg;
       }
+      console.log("logging:" + response);
     },
     async matchWithPlayer(player) {
       try {
