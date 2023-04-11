@@ -1,6 +1,7 @@
 package me.efjerryyang.gomokuonline.service;
 
 import me.efjerryyang.gomokuonline.entity.Game;
+import me.efjerryyang.gomokuonline.entity.Move;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -32,6 +33,14 @@ public class GameService {
 
     public void updateGameStatus(Long id, Integer status) {
         gameList.stream().filter(game -> game.getId().equals(id)).findFirst().ifPresent(game -> game.setStatus(status));
+    }
+    public void updateGameMove(Game game, Move move) {
+        gameList.stream().filter(game1 -> game1.getId().equals(game.getId())).findFirst().ifPresent(game1 -> {
+            game1.getMoves().add(move);
+            game1.setTurn(game1.getTurn() + 1);
+            game1.getBoard()[move.getX()][move.getY()] = game1.getTurn() % 2 == (game1.getWhoFirst() % 2) ? 1 : 2;
+        });
+
     }
 
 }

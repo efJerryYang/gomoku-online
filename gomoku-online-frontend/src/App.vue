@@ -321,23 +321,29 @@ export default {
     async placeStone(row, col) {
       try {
         const token = await this.getJwtToken();
-        const response = await axios.post('/api/game', {
-          id: this.gameId,
-          row,
-          col
+        const response = await axios.post('/api/move', {
+          gameId: this.gameId,
+          x: row,
+          y: col,
+          moveTime: Date.now() // timestamp_ms
         }, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
         if (response.status === 200) {
-          this.board = response.data.board;
-          this.yourTurn = response.data.whoseTurn === this.id;
-          this.remainingTime = response.data.remainingTime;
-          this.historyScore = `You: ${response.data.player1.score}, Opponent: ${response.data.player2.score}`;
-
+          let game = response.data;
+          console.log('logging (placeStone):', game);
+          if (game.id && game.player1 && game.player2) {
+            this.gameId = game.id;
+            this.yourTurn = game.whoseTurn === this.id;
+            this.board = this.fillBoard(game.board);
+            this.historyScore = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
+            this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
+            this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
+          }
           // set the class of the cell based on the player's turn                                                                                                                                                        
-          const cellClass = response.data.turn === 1 ? 'white' : 'black';
+          const cellClass = (this.yourTurn) ? 'white' : 'black';
           const cell = document.querySelector(`.board .row:nth-child(${row + 1}) .cell:nth-child(${col + 1})`);
           cell.classList.add(cellClass);
 
