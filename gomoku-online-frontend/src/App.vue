@@ -127,6 +127,26 @@ export default {
         return `${hours} h ${minutes} min ${seconds} s`
       }
     },
+    fillBoard(responseBoard) {
+      // 0 -> background.gif
+      // 1 -> whiteStone.gif
+      // 2 -> blackStone.gif
+      const board = [];
+      for (let i = 0; i < 15; i++) {
+        const row = [];
+        for (let j = 0; j < 15; j++) {
+          if (responseBoard[i][j] === 0) {
+            row.push('src/assets/background.gif')
+          } else if (responseBoard[i][j] === 1) {
+            row.push('src/assets/whiteStone.gif');
+          } else {
+            row.push('src/assets/blackStone.gif');
+          }
+        }
+        board.push(row);
+      }
+      return board;
+    }, 
     // checkMatchingStatus
     async checkMatchingStatus() {
       try {
@@ -138,6 +158,15 @@ export default {
         });
         if (response.status === 200) {
           // this.handleMatchingConfirmResponse(response);
+          let game = response.data;
+          if (game.id && game.player1 && game.player2) {
+            this.gameId = game.id;
+            this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
+            this.yourTurn = game.turn === this.id;
+            this.board = this.fillBoard(game.board);
+            this.result = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
+            this.remainingTime = game.remainingTime;
+          }
           
         }
       } catch (error) {
@@ -357,7 +386,7 @@ export default {
     createEmptyBoard() {
       const board = [];
       for (let i = 0; i < 15; i++) {
-        board.push(new Array(15).fill('assets/background.gif'));
+        board.push(new Array(15).fill('src/assets/background.gif'));
       }
       return board;
     },

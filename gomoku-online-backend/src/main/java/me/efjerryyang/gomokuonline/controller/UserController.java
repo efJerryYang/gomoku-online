@@ -71,7 +71,7 @@ public class UserController {
     }
 
     @GetMapping("/matching")
-    public ResponseEntity<ResponseMatching> getMatchingStatus(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<GameDTO> getMatchingStatus(@RequestHeader("Authorization") String token) {
         String clientId = jwtService.getClientIdFromToken(token);
 //        System.out.println("GET: matching (clientId=" + clientId + ")");
         User user = userService.getUserByClientId(clientId);
@@ -81,13 +81,13 @@ public class UserController {
         // Get game by user id
         Game game = gameService.getGameByPlayerId(user.getId());
         if (game == null) {
-            return ResponseEntity.ok(new ResponseMatching(null, "No matching"));
+            return ResponseEntity.ok(new GameDTO());
         }
         Player opponent = game.getOpponentByPlayerId(user.getId());
         if (opponent == null) {
-            return ResponseEntity.ok(new ResponseMatching(null, "No matching"));
+            return ResponseEntity.ok(new GameDTO());
         } else {
-            return ResponseEntity.ok(new ResponseMatching(opponent, "Matching"));
+            return ResponseEntity.ok(new GameDTO(game));
         }
     }
 
