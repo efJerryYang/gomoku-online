@@ -1,6 +1,7 @@
 package me.efjerryyang.gomokuonline.controller;
 
 import io.jsonwebtoken.JwtException;
+import me.efjerryyang.gomokuonline.dto.CheckGameDTO;
 import me.efjerryyang.gomokuonline.dto.GameDTO;
 import me.efjerryyang.gomokuonline.dto.MoveDTO;
 import me.efjerryyang.gomokuonline.entity.Game;
@@ -47,4 +48,22 @@ public class GameController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+    @PostMapping("/game")
+    public ResponseEntity<GameDTO> getGame(@RequestHeader("Authorization") String token, @RequestBody CheckGameDTO checkGameDTO) {
+        try {
+            String clientId = jwtService.getClientIdFromToken(token);
+            User user = userService.getUserByClientId(clientId);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+            Game game = gameService.getGameById(checkGameDTO.getGameId());
+            if (game == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+            return ResponseEntity.ok().body(new GameDTO(game));
+        } catch (JwtException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
 }

@@ -102,10 +102,11 @@ export default {
           this.checkMatchingStatus();
         }
       } else {
-        if (!this.yourTurn) // opponent's turn
-          this.checkOpponentMove();
-        else // your turn
-          this.remainingTime--;
+        // if (!this.yourTurn) // opponent's turn
+        console.log('logging (yourTurn):', this.yourTurn);
+        this.checkGameStatus();
+        // else // your turn
+        // this.remainingTime--;
       }
       console.log('logging (matchedPlayer):', this.matchedPlayer);
     }, 1000);
@@ -186,8 +187,32 @@ export default {
         console.error(error);
       }
     },
-    async checkOpponentMove() {
-      // TODO: determine to get entire GameDTO or just the move
+    async checkGameStatus() {
+      // Get GameDTO
+      try {
+        const token = await this.getJwtToken();
+        const response = await axios.post('/api/game', {
+          gameId: this.gameId
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        if (response.status === 200) {
+          let game = response.data;
+          console.log('logging (checkGameStatus):', game);
+          if (game.id && game.player1 && game.player2) {
+            this.gameId = game.id;
+            this.yourTurn = game.whoseTurn === this.id;
+            this.board = this.fillBoard(game.board);
+            this.historyScore = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
+            this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
+            this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
       // For user who submit the move should be just the move and timestamp, but whether another user should only update the move it is not clear
     },
     // handleMatchingConfirmResponse(response) {
