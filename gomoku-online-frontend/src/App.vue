@@ -32,12 +32,15 @@
       </div>
     </div>
     <div class="game" v-else>
-      <div class="status">
-        <div class="you" :class="yourTurn ? 'bold' : ''">{{ username }}</div>
-        <div class="opponent" :class="!yourTurn ? 'bold' : ''">{{ matchedPlayer.username }}</div>
-        <div class="timer">{{ remainingTime }}</div>
-      </div>
       <div class="board">
+        <div class="result-panel">
+          <div class="result">{{ result }}</div>
+        </div>
+        <div class="status">
+          <div class="you" :class="yourTurn ? 'bold' : ''">You: {{ username }}</div>
+          <div class="opponent" :class="!yourTurn ? 'bold' : ''">Opponent: {{ matchedPlayer.username }}</div>
+          <div class="timer">Timer: {{ remainingTime }}</div>
+        </div>
         <div class="row" v-for="(row, rowIndex) in board" :key="rowIndex">
           <div class="cell" v-for="(cell, cellIndex) in row" :key="cellIndex" @click="placeStone(rowIndex, cellIndex)">
             <img :src="cell" :alt="cell" />
@@ -45,8 +48,10 @@
         </div>
         <div class="result-panel">
           <div class="result">{{ result }}</div>
-          <button @click="startNewRound"> Start New Round </button>
-          <button @click="exitGame"> Exit Game </button>
+          <div class="buttons">
+            <button @click="startNewRound"> Start New Round </button>
+            <button @click="exitGame"> Exit Game </button>
+          </div>
         </div>
       </div>
     </div>
@@ -496,17 +501,19 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 20px;
 }
 
 .status {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 .status div {
-  font-size: 24px;
+  font-size: 20px;
   margin-right: 20px;
 }
 
@@ -514,29 +521,38 @@ export default {
   font-weight: bold;
 }
 
-.timer {
-  font-size: 30px;
-  margin-left: 20px;
+.you,
+.opponent {
+  font-weight: normal;
+}
+
+.bold {
+  font-weight: bold;
 }
 
 .board {
-  display: grid;
-  grid-template-columns: repeat(10, 40px);
-  grid-template-rows: repeat(10, 40px);
-  /* margin-bottom: 10px; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.board .cell {
-  border-left: 1px solid #000000;
-  border-right: 1px solid #000000;
-  border-bottom: 1px solid #000000;
-  border-top: 1px solid #000000;
+.board .row {
+  display: table-row;
+}
+
+.board .row .cell {
+  display: table-cell;
+  border: 1px solid black;
+  text-align: center;
+  vertical-align: middle;
   width: 40px;
   height: 40px;
 }
 
-.board .cell img {
+
+.board .row .cell img {
   max-width: 100%;
+  max-height: 100%;
 }
 
 .board .cell.white {
@@ -549,32 +565,38 @@ export default {
 
 .result-panel {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+  margin-top: 20px;
 }
 
 .result {
   font-size: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .result-panel button {
+  margin: 5px;
   font-size: 18px;
   padding: 5px;
   border-radius: 3px;
-  background-color: #4caf50;
-  /* green */
   color: white;
   border: none;
   cursor: pointer;
   margin-right: 20px;
 }
 
+.result-panel button:first-child {
+  background-color: #4caf50;
+  /* green */
+}
+
 .result-panel button:last-child {
   background-color: #f44336;
   /* red */
 }
+
 
 .popup {
   position: fixed;
