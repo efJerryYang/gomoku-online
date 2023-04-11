@@ -91,25 +91,25 @@ public class UserController {
         }
     }
 
-    @PostMapping("/matchConfirm")
-    public ResponseEntity<GameDTO> confirmMatch(@RequestHeader("Authorization") String token, @RequestBody MatchConfirmDTO matchDTO) {
-        String clientId = jwtService.getClientIdFromToken(token);
-        Long userId = userService.getUserByClientId(clientId).getId();
-        System.out.println("POST: matchConfirm (clientId=" + clientId + ")");
-        if (matchDTO.getResult() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        Game game = gameService.getGameByPlayerId(userId);
-        if (game != null && game.getStatus().equals(Constant.GAME_STATUS_PENDING)) {
-            // another player checked the matching status first
-            gameService.updateGameStatus(game.getId(), Constant.GAME_STATUS_PLAYING);
-            return ResponseEntity.ok(new GameDTO(game));
-        } else if (game != null) {
-            return ResponseEntity.ok(new GameDTO(game));
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+//    @PostMapping("/matchConfirm")
+//    public ResponseEntity<GameDTO> confirmMatch(@RequestHeader("Authorization") String token, @RequestBody MatchConfirmDTO matchDTO) {
+//        String clientId = jwtService.getClientIdFromToken(token);
+//        Long userId = userService.getUserByClientId(clientId).getId();
+//        System.out.println("POST: matchConfirm (clientId=" + clientId + ")");
+//        if (matchDTO.getResult() == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+//        }
+//        Game game = gameService.getGameByPlayerId(userId);
+//        if (game != null && game.getStatus().equals(Constant.GAME_STATUS_PENDING)) {
+//            // another player checked the matching status first
+//            gameService.updateGameStatus(game.getId(), Constant.GAME_STATUS_PLAYING);
+//            return ResponseEntity.ok(new GameDTO(game));
+//        } else if (game != null) {
+//            return ResponseEntity.ok(new GameDTO(game));
+//        } else {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
 
     @Data
     @NoArgsConstructor
