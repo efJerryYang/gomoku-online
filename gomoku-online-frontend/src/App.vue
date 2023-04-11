@@ -538,6 +538,7 @@ export default {
 
 .board .row {
   display: table-row;
+  font-size: 0;
 }
 
 .board .row .cell {
