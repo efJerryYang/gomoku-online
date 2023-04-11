@@ -8,6 +8,7 @@ import me.efjerryyang.gomokuonline.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -103,7 +104,13 @@ public class UserService {
         newGame.setPlayer1(new Player(user1.getUsername(), user1.getId()));
         newGame.setPlayer2(new Player(user2.getUsername(), user2.getId()));
         newGame.setTurn(1);
-        newGame.setBoard(new Integer[Constant.BOARD_SIZE][Constant.BOARD_SIZE]);
+        // newGame.setBoard(new Integer[Constant.BOARD_SIZE][Constant.BOARD_SIZE]);
+        Integer zero = Constant.BACKGROUND_CELL;
+        Integer[][] board = new Integer[Constant.BOARD_SIZE][Constant.BOARD_SIZE];
+        for (Integer[] row : board) {
+            Arrays.fill(row, zero);
+        }
+        newGame.setBoard(board);
         newGame.setStatus(Constant.GAME_STATUS_PENDING);
         newGame.setWhoFirst((int) (Math.random() * 2) + 1); // (int) [1.0, 3.0) => 1 or 2
         newGame.setMoves(new ArrayList<>());
