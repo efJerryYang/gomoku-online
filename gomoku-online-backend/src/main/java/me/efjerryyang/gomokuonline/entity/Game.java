@@ -28,6 +28,13 @@ public class Game {
         }
     }
 
+    public Player getPlayerByPlayerId(Long playerId) {
+        if (Objects.equals(playerId, player1.getId())) {
+            return player1;
+        } else {
+            return player2;
+        }
+    }
     public Player getOpponent(Player player) {
         if (Objects.equals(player.getId(), player1.getId())) {
             return player2;
