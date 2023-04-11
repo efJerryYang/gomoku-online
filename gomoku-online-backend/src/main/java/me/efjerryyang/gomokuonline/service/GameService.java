@@ -43,43 +43,49 @@ public class GameService {
             return;
         }
         // check if the player's turn
-        if (game.getTurn() % 2 != (game.getWhoFirst() % 2) && game.getPlayer1().getId().equals(move.getPlayer().getId())) {
+        if (!game.getNowTurnPlayer().equals(move.getPlayer())) {
             return;
-        }
-        gameList.stream().filter(game1 -> game1.getId().equals(game.getId())).findFirst().ifPresent(game1 -> {
-            game1.getMoves().add(move);
-            game1.setTurn(game1.getTurn() + 1);
-            game1.getBoard()[move.getX()][move.getY()] = game1.getTurn() % 2 == (game1.getWhoFirst() % 2) ? 1 : 2;
-        });
-        // check if game end
-        Integer gameStatus = checkGameStatus(game);
-        if (gameStatus != Constant.GAME_STATUS_PLAYING) {
-            game.setStatus(gameStatus);
         }
         // update game move
         game.getMoves().add(move);
-//        game.setTurn(game.getTurn() + 1);
+        game.getBoard()[move.getX()][move.getY()] = game.getPlayerStoneType(move.getPlayer());
+        // check if game end
+        Integer gameStatus = checkGameStatus(game);
+        game.setTurn(game.getTurn() + 1);
+
+        if (gameStatus != Constant.GAME_STATUS_PLAYING) {
+            game.setStatus(gameStatus);
+            System.out.print("Game end: ");
+            switch (gameStatus) {
+                case Constant.GAME_STATUS_PLAYER1_WIN ->
+                        System.out.println("Player 1 win (" + game.getPlayer1().getUsername() + ")");
+                case Constant.GAME_STATUS_PLAYER2_WIN ->
+                        System.out.println("Player 2 win (" + game.getPlayer2().getUsername() + ")");
+                case Constant.GAME_STATUS_IT_IS_A_TIE -> System.out.println("It is a tie");
+            }
+        }
     }
 
     public Integer checkGameStatus(Game game) {
         Integer[][] board = game.getBoard();
         Integer turn = game.getTurn();
         Integer whoFirst = game.getWhoFirst();
-        Integer player = turn % 2 == (whoFirst % 2) ? 1 : 2;
+        Integer playerNumber = game.getNowTurnPlayerNumber();
+        Integer playerStone = game.getPlayerStoneType(game.getPlayer(playerNumber));
         for (int i = 0; i < Constant.BOARD_SIZE; i++) {
             for (int j = 0; j < Constant.BOARD_SIZE; j++) {
-                if (Objects.equals(board[i][j], player)) {
-                    if (i + 4 < Constant.BOARD_SIZE && board[i + 1][j] == player && board[i + 2][j] == player && board[i + 3][j] == player && board[i + 4][j] == player) {
-                        return player + Constant.GAME_STATUS_IT_IS_A_TIE;
+                if (Objects.equals(board[i][j], playerStone)) {
+                    if (i + 4 < Constant.BOARD_SIZE && board[i + 1][j] == playerStone && board[i + 2][j] == playerStone && board[i + 3][j] == playerStone && board[i + 4][j] == playerStone) {
+                        return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
                     }
-                    if (j + 4 < Constant.BOARD_SIZE && board[i][j + 1] == player && board[i][j + 2] == player && board[i][j + 3] == player && board[i][j + 4] == player) {
-                        return player + Constant.GAME_STATUS_IT_IS_A_TIE;
+                    if (j + 4 < Constant.BOARD_SIZE && board[i][j + 1] == playerStone && board[i][j + 2] == playerStone && board[i][j + 3] == playerStone && board[i][j + 4] == playerStone) {
+                        return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
                     }
-                    if (i + 4 < Constant.BOARD_SIZE && j + 4 < Constant.BOARD_SIZE && board[i + 1][j + 1] == player && board[i + 2][j + 2] == player && board[i + 3][j + 3] == player && board[i + 4][j + 4] == player) {
-                        return player + Constant.GAME_STATUS_IT_IS_A_TIE;
+                    if (i + 4 < Constant.BOARD_SIZE && j + 4 < Constant.BOARD_SIZE && board[i + 1][j + 1] == playerStone && board[i + 2][j + 2] == playerStone && board[i + 3][j + 3] == playerStone && board[i + 4][j + 4] == playerStone) {
+                        return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
                     }
-                    if (i - 4 >= 0 && j + 4 < Constant.BOARD_SIZE && board[i - 1][j + 1] == player && board[i - 2][j + 2] == player && board[i - 3][j + 3] == player && board[i - 4][j + 4] == player) {
-                        return player + Constant.GAME_STATUS_IT_IS_A_TIE;
+                    if (i - 4 >= 0 && j + 4 < Constant.BOARD_SIZE && board[i - 1][j + 1] == playerStone && board[i - 2][j + 2] == playerStone && board[i - 3][j + 3] == playerStone && board[i - 4][j + 4] == playerStone) {
+                        return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
                     }
                 }
             }
@@ -89,4 +95,52 @@ public class GameService {
         }
         return Constant.GAME_STATUS_PLAYING;
     }
+//    // Dynamic Programming attempts
+//    public Integer checkGameStatus(Game game) {
+//        Integer[][] board = game.getBoard();
+//        int[][][] dp = new int[Constant.BOARD_SIZE][Constant.BOARD_SIZE][6];
+//        for (int i = 0; i < Constant.BOARD_SIZE; i++) {
+//            for (int j = 0; j < Constant.BOARD_SIZE; j++) {
+//                Arrays.fill(dp[i][j], 0);
+//            }
+//        }
+//
+//        int lastX = -1, lastY = -1;
+//        for (int i = 0; i < Constant.BOARD_SIZE; i++) {
+//            for (int j = 0; j < Constant.BOARD_SIZE; j++) {
+//                if (!Objects.equals(board[i][j], null)) {
+//                    int color = board[i][j];
+//                    for (int k = 1; k <= 5; k++) {
+//                        if (i >= k - 1 && dp[i - (k - 1)][j][k - 1] > 0) {
+//                            dp[i][j][k] = dp[i - (k - 1)][j][k - 1] + 1;
+//                        }
+//                        if (j >= k - 1 && dp[i][j - (k - 1)][k - 1] > 0) {
+//                            dp[i][j][k] = dp[i][j - (k - 1)][k - 1] + 1;
+//                        }
+//                        if (i >= k - 1 && j >= k - 1 && dp[i - (k - 1)][j - (k - 1)][k - 1] > 0) {
+//                            dp[i][j][k] = dp[i - (k - 1)][j - (k - 1)][k - 1] + 1;
+//                        }
+//                        if (i >= k - 1 && j <= Constant.BOARD_SIZE - k && dp[i - (k - 1)][j + (k - 1)][k - 1] > 0) {
+//                            dp[i][j][k] = dp[i - (k - 1)][j + (k - 1)][k - 1] + 1;
+//                        }
+//                        if (dp[i][j][k] >= k) {
+//                            if (lastX == -1 || dp[lastX][lastY][k] < dp[i][j][k] || (dp[lastX][lastY][k] == dp[i][j][k] && board[lastX][lastY] != color)) {
+//                                lastX = i;
+//                                lastY = j;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        if (lastX != -1 && dp[lastX][lastY][5] >= 5) {
+//            return board[lastX][lastY] + Constant.GAME_STATUS_IT_IS_A_TIE;
+//        } else if (game.getTurn() == Constant.BOARD_SIZE * Constant.BOARD_SIZE) {
+//            return Constant.GAME_STATUS_IT_IS_A_TIE;
+//        } else {
+//            return Constant.GAME_STATUS_PLAYING;
+//        }
+//    }
+
 }

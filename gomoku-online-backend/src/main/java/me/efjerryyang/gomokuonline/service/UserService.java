@@ -114,6 +114,10 @@ public class UserService {
         newGame.setBoard(board);
         newGame.setStatus(Constant.GAME_STATUS_PENDING);
         newGame.setWhoFirst((int) (Math.random() * 2) + 1); // (int) [1.0, 3.0) => 1 or 2
+        switch (newGame.getWhoFirst()) {
+            case 1 -> System.out.println("Player " + newGame.getPlayer1().getUsername() + " goes first");
+            case 2 -> System.out.println("Player " + newGame.getPlayer2().getUsername() + " goes first");
+        }
         newGame.setMoves(new ArrayList<>());
         return newGame;
     }
