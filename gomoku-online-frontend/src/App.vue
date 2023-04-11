@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <div v-if="showPopup" class="popup">
+    <!-- <div v-if="showPopup" class="popup">
       <div class="popup-content">
         <div class="popup-message">{{ popupMessage }}</div>
         <div class="popup-timer">
@@ -61,7 +61,7 @@
           <button @click="onConfirm(false)">Reject</button>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -137,34 +137,36 @@ export default {
           }
         });
         if (response.status === 200) {
-          this.handleMatchingConfirmResponse(response);
+          // this.handleMatchingConfirmResponse(response);
+          
         }
       } catch (error) {
         console.error(error);
       }
     },
-    handleMatchingConfirmResponse(response) {
-      if (response.matchWithPlayer && response.data.info.toLowerCase() === 'matching') {
-        this.showPopup = true;
-        this.popupMessage = `You are matched with ${response.data.matchedPlayer.username} (${response.data.matchedPlayer.id})`;
-        this.popupTimer = setInterval(() => {
-          if (this.timerWidth === '0%') {
-            clearInterval(this.popupTimer);
-            this.onConfirm(false);
-          } else {
-            console.log("logging:", this.showPopup, this.popupTimer);
-            this.timerWidth = `${parseInt(this.timerWidth) - 5}%`;
-          }
-        }, 1000);
-      }
-    },
-    onConfirm(result) {
-      clearInterval(this.popupTimer);
-      this.showPopup = false;
-      this.timerWidth = '100%';
-      // post confirm result
-      this.$http.post('/api/matchConfirm', { result: result });
-    },
+    // handleMatchingConfirmResponse(response) {
+    //   if (response.matchWithPlayer && response.data.info.toLowerCase() === 'matching') {
+    //     this.showPopup = true;
+    //     this.popupMessage = `You are matched with ${response.data.matchedPlayer.username} (${response.data.matchedPlayer.id})`;
+    //     this.popupTimer = setInterval(() => {
+    //       if (this.timerWidth === '0%') {
+    //         clearInterval(this.popupTimer);
+    //         this.onConfirm(false);
+    //       } else {
+    //         console.log("logging:", this.showPopup, this.popupTimer);
+    //         this.timerWidth = `${parseInt(this.timerWidth) - 5}%`;
+    //       }
+    //     }, 1000);
+    //   }
+    // },
+    // onConfirm(result) {
+    //   clearInterval(this.popupTimer);
+    //   this.showPopup = false;
+    //   this.timerWidth = '100%';
+    //   // post confirm result
+    //   this.$http.post('/api/matchConfirm', { result: result });
+    //   // need Auth here
+    // },
     async getJwtToken() {
       let token = localStorage.getItem('jwtToken');
       let clientId = Math.random().toString(36).substring(2);
