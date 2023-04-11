@@ -631,7 +631,7 @@ export default {
   /* red */
 }
 
-
+/* 
 .popup {
   position: fixed;
   top: 0;
@@ -677,5 +677,5 @@ export default {
   display: flex;
   justify-content: space-around;
   width: 100%;
-}
+} */
 </style>
