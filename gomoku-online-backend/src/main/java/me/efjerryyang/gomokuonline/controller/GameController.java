@@ -1,6 +1,7 @@
 package me.efjerryyang.gomokuonline.controller;
 
 import io.jsonwebtoken.JwtException;
+import me.efjerryyang.gomokuonline.Constant;
 import me.efjerryyang.gomokuonline.dto.CheckGameDTO;
 import me.efjerryyang.gomokuonline.dto.GameDTO;
 import me.efjerryyang.gomokuonline.dto.MoveDTO;
@@ -37,6 +38,11 @@ public class GameController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
             Game game = gameService.getGameById(moveDTO.getGameId());
+            if (game.getStatus() != Constant.GAME_STATUS_PLAYING) {
+                // if not playing, cannot move
+                // TODO: add error message for this
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
             Player player = game.getPlayerByPlayerId(user.getId());
             Move move = new Move(player, moveDTO);
             System.out.println("Player " + player.getUsername() + " move to " + move.getX() + ", " + move.getY());

@@ -82,6 +82,7 @@ public class UserController {
         if (opponent == null) {
             return ResponseEntity.ok(new GameDTO());
         } else {
+            game.setStatus(Constant.GAME_STATUS_PLAYING);
             return ResponseEntity.ok(new GameDTO(game));
         }
     }
@@ -96,7 +97,7 @@ public class UserController {
         Game game = gameService.getGameByPlayerId(matchDTO.getUserId());
         if (game != null && game.getStatus().equals(Constant.GAME_STATUS_PENDING)) {
             // another player checked the matching status first
-            gameService.updateGameStatus(game.getId(), Constant.GAME_STATUS_PLAYING);
+            game.setStatus(Constant.GAME_STATUS_PLAYING);
             return ResponseEntity.ok(new GameDTO(game));
         } else if (game != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

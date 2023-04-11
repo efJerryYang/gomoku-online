@@ -14,7 +14,7 @@ public class JwtService {
     public static final String SECRET_KEY = "mySecretKey";
 
     public String generateToken(String clientId) {
-        long expirationTime = Constant.DAY_TO_SECONDS * 1000;
+        long expirationTime = Constant.MONTH_TO_SECONDS * 1000;
 
         return Jwts.builder()
                 .setId(clientId)
