@@ -1,7 +1,6 @@
 package me.efjerryyang.gomokuonline.service;
 
 import me.efjerryyang.gomokuonline.Constant;
-import me.efjerryyang.gomokuonline.dto.GameDTO;
 import me.efjerryyang.gomokuonline.dto.MatchGetDTO;
 import me.efjerryyang.gomokuonline.entity.Game;
 import me.efjerryyang.gomokuonline.entity.Player;
@@ -38,12 +37,15 @@ public class UserService {
             updateWaitingList(user);
         }
     }
+
     public User getUserByClientId(String clientId) {
         return userList.stream().filter(user -> user.getClientId().equals(clientId)).findFirst().orElse(null);
     }
+
     public User getUserById(Long id) {
         return userList.stream().filter(user -> user.getId().equals(id)).findFirst().orElse(null);
     }
+
     public List<MatchGetDTO> getWaitingList() {
         return waitingList;
     }
