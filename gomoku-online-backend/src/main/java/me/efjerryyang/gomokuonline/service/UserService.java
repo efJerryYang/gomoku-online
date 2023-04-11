@@ -101,9 +101,10 @@ public class UserService {
         newGame.setId((long) (Math.random() * 1_0000_0000));
         User user1 = getUserById(playerId1);
         User user2 = getUserById(playerId2);
-        newGame.setPlayer1(new Player(user1.getUsername(), user1.getId()));
-        newGame.setPlayer2(new Player(user2.getUsername(), user2.getId()));
+        newGame.setPlayer1(new Player(user1.getUsername(), user1.getId(), 0));
+        newGame.setPlayer2(new Player(user2.getUsername(), user2.getId(), 0));
         newGame.setTurn(1);
+
         // newGame.setBoard(new Integer[Constant.BOARD_SIZE][Constant.BOARD_SIZE]);
         Integer zero = Constant.BACKGROUND_CELL;
         Integer[][] board = new Integer[Constant.BOARD_SIZE][Constant.BOARD_SIZE];

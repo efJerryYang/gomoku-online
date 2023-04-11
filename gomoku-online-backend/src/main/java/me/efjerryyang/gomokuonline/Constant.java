@@ -23,5 +23,7 @@ public class Constant {
     // Game info
     public static final int GAME_STATUS_PENDING = 0;
     public static final int GAME_STATUS_PLAYING = 1;
-    public static final int GAME_STATUS_FINISHED = 2;
+    public static final int GAME_STATUS_IT_IS_A_TIE = 2;
+    public static final int GAME_STATUS_PLAYER1_WIN = 3;
+    public static final int GAME_STATUS_PLAYER2_WIN = 4;
 }
