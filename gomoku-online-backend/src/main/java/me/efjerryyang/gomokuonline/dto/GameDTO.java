@@ -14,7 +14,7 @@ public class GameDTO {
     private Player player1;
     private Player player2;
     private Integer turn;
-    private Long whosTurn;
+    private Long whoseTurn;
     private Integer[][] board;
     private Integer result;
 
@@ -23,7 +23,7 @@ public class GameDTO {
         this.player1 = game.getPlayer1();
         this.player2 = game.getPlayer2();
         this.turn = game.getTurn();
-        this.whosTurn = game.getTurn() % 2 == (game.getWhoFirst() % 2) ? player1.getId() : player2.getId();
+        this.whoseTurn = game.getTurn() % 2 == (game.getWhoFirst() % 2) ? player1.getId() : player2.getId();
         this.board = game.getBoard();
         this.result = game.getStatus();
     }
