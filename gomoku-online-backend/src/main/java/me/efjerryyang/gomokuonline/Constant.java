@@ -13,6 +13,8 @@ public class Constant {
     public static final long HOUR_TO_SECONDS = 60 * MINUTE_TO_SECONDS;
     public static final long DAY_TO_SECONDS = 24 * HOUR_TO_SECONDS;
     public static final long WEEK_TO_SECONDS = 7 * DAY_TO_SECONDS;
+    public static final long MONTH_TO_SECONDS = 30 * DAY_TO_SECONDS;
+    public static final long YEAR_TO_SECONDS = 365 * DAY_TO_SECONDS;
 
     // Board info
     public static final int BOARD_SIZE = 10;
