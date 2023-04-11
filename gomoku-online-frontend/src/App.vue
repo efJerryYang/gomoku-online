@@ -165,7 +165,7 @@ export default {
           if (game.id && game.player1 && game.player2) {
             this.gameId = game.id;
             this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
-            this.yourTurn = game.turn === this.id;
+            this.yourTurn = game.whosTurn === this.id;
             this.board = this.fillBoard(game.board);
             this.result = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
             this.remainingTime = game.remainingTime;
