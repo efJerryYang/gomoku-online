@@ -95,13 +95,14 @@ export default {
   },
   mounted() {
     setInterval(() => {
-      this.refreshMatchingList();
-    }, 1000);
-    // check matching status
-    setInterval(() => {
-      if (this.id) {
-        this.checkMatchingStatus();
+      if (!this.matchedPlayer) {
+        this.refreshMatchingList();
+        if (this.id) {
+          // check matching status
+          this.checkMatchingStatus();
+        }
       }
+      console.log('logging (matchedPlayer):', this.matchedPlayer);
     }, 1000);
   },
   methods: {
@@ -166,15 +167,14 @@ export default {
         if (response.status === 200) {
           // this.handleMatchingConfirmResponse(response);
           let game = response.data;
-          console.log('logging:', game);
+          console.log('logging (checkMatchingStatus):', game);
           if (game.id && game.player1 && game.player2) {
             this.gameId = game.id;
-            this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
             this.yourTurn = game.whosTurn === this.id;
             this.board = this.fillBoard(game.board);
             this.historyScore = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
-            this.remainingTime = game.remainingTime;
             this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
+            this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
           }
         }
       } catch (error) {
@@ -233,7 +233,7 @@ export default {
         return;
       }
       this.username = this.username.trim();
-      console.log("logging:" + this.username);
+      console.log("logging (pickUsername):", this.username);
       try {
         const token = await this.getJwtToken();
         const response = await axios.post('/api/pick', {
@@ -245,9 +245,9 @@ export default {
         });
         // if no response is received, the request failed
         if (response.status === 200) {
+          this.matchedPlayer = null;
           this.id = response.data.id;
           this.notification = 'Successfully joined the matching list: ' + this.username + ' (' + this.id + ')';
-          this.matchedPlayer = null;
           this.yourTurn = false;
         }
         else {
@@ -256,7 +256,7 @@ export default {
       } catch (error) {
         this.notification = error.response.data.msg;
       }
-      console.log("logging:" + response);
+      console.log("logging (pickUsername response):", response);
     },
 
     async matchWithPlayer(player) {
@@ -271,13 +271,16 @@ export default {
           }
         });
         if (response.status === 200) {
-          this.notification = 'Successfully matched with a player';
-          this.matchedPlayer = response.data;
-          console.log("logging:", response.data);
-          this.board = response.data.board;
-          this.yourTurn = response.data.yourTurn;
-          this.remainingTime = response.data.remainingTime;
-          this.gameId = response.data.id;
+          let game = response.data;
+          console.log('logging (matchWithPlayer):', game);
+          if (game.id && game.player1 && game.player2) {
+            this.gameId = game.id;
+            this.yourTurn = game.whosTurn === this.id;
+            this.board = this.fillBoard(game.board);
+            this.historyScore = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
+            this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
+            this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
+          }
         }
       } catch (error) {
         this.notification = error.response.data.msg;
