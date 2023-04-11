@@ -50,6 +50,18 @@
         </div>
       </div>
     </div>
+    <div v-if="showPopup" class="popup">
+      <div class="popup-content">
+        <div class="popup-message">{{ popupMessage }}</div>
+        <div class="popup-timer">
+          <div class="popup-timer-bar" :style="{ width: timerWidth }"></div>
+        </div>
+        <div class="popup-buttons">
+          <button @click="onConfirm(true)">Accept</button>
+          <button @click="onConfirm(false)">Reject</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -68,7 +80,12 @@ export default {
       remainingTime: 30,
       board: [], // Initialize board with empty array of 15x15
       result: 'You: 0, Opponent: 0',
-      gameId: null
+      gameId: null,
+
+      showPopup: false,
+      popupMessage: '',
+      popupTimer: null,
+      timerWidth: '100%',
     };
   },
   mounted() {
@@ -120,14 +137,33 @@ export default {
           }
         });
         if (response.status === 200) {
-          if (response.data.info.toLowerCase() === 'matching') {
-            this.matchedPlayer = response.data.matchedPlayer;
-            this.notification = 'Matched with ' + this.matchedPlayer.username;
-          }
+          this.handleMatchingConfirmResponse(response);
         }
       } catch (error) {
         console.error(error);
       }
+    },
+    handleMatchingConfirmResponse(response) {
+      if (response.matchWithPlayer && response.data.info.toLowerCase() === 'matching') {
+        this.showPopup = true;
+        this.popupMessage = `You are matched with ${response.data.matchedPlayer.username} (${response.data.matchedPlayer.id})`;
+        this.popupTimer = setInterval(() => {
+          if (this.timerWidth === '0%') {
+            clearInterval(this.popupTimer);
+            this.onConfirm(false);
+          } else {
+            console.log("logging:", this.showPopup, this.popupTimer);
+            this.timerWidth = `${parseInt(this.timerWidth) - 5}%`;
+          }
+        }, 1000);
+      }
+    },
+    onConfirm(result) {
+      clearInterval(this.popupTimer);
+      this.showPopup = false;
+      this.timerWidth = '100%';
+      // post confirm result
+      this.$http.post('/api/matchConfirm', { result: result });
     },
     async getJwtToken() {
       let token = localStorage.getItem('jwtToken');
@@ -198,7 +234,7 @@ export default {
         if (response.status === 200) {
           this.notification = 'Successfully matched with a player';
           this.matchedPlayer = response.data;
-          console.log(response.data);
+          console.log("logging:", response.data);
           this.board = response.data.board;
           this.yourTurn = response.data.yourTurn;
           this.remainingTime = response.data.remainingTime;
@@ -506,5 +542,52 @@ export default {
 .result-panel button:last-child {
   background-color: #f44336;
   /* red */
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  width: 300px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.popup-message {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.popup-timer {
+  width: 100%;
+  height: 10px;
+  background-color: lightgray;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.popup-timer-bar {
+  height: 100%;
+  background-color: green;
+  border-radius: 5px;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
 }
 </style>
