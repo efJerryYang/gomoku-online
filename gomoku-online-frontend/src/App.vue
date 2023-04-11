@@ -141,8 +141,8 @@ export default {
     },
     fillBoard(responseBoard) {
       // 0 -> background.gif
-      // 1 -> whiteStone.gif
-      // 2 -> blackStone.gif
+      // 1 -> blackStone.gif
+      // 2 -> whiteStone.gif
       const board = [];
       for (let i = 0; i < 10; i++) {
         const row = [];
@@ -150,9 +150,9 @@ export default {
           if (responseBoard[i][j] === 0) {
             row.push('src/assets/background.gif')
           } else if (responseBoard[i][j] === 1) {
-            row.push('src/assets/whiteStone.gif');
-          } else if (responseBoard[i][j] === 2) {
             row.push('src/assets/blackStone.gif');
+          } else if (responseBoard[i][j] === 2) {
+            row.push('src/assets/whiteStone.gif');
           } else {
             row.push(null);
           }
@@ -208,6 +208,25 @@ export default {
             this.historyScore = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
             this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
             this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
+            //     // Game info
+            // public static final int GAME_STATUS_PENDING = 0;
+            // public static final int GAME_STATUS_PLAYING = 1;
+            // public static final int GAME_STATUS_IT_IS_A_TIE = 2;
+            // public static final int GAME_STATUS_PLAYER1_WIN = 3;
+            // public static final int GAME_STATUS_PLAYER2_WIN = 4;
+            if (game.result > 1) {
+              if (game.result === 2) {
+                this.notification = 'It is a tie';
+              } else if (game.result === 3 && this.id === game.player1.id) {
+                this.notification = 'You won!';
+              } else if (game.result === 4 && this.id === game.player2.id) {
+                this.notification = 'You won!';
+              } else if (game.result === 3 && this.id === game.player2.id) {
+                this.notification = 'You lost...';
+              } else if (game.result === 4 && this.id === game.player1.id) {
+                this.notification = 'You lost...';
+              }
+            }
           }
         }
       } catch (error) {
@@ -356,35 +375,7 @@ export default {
             Authorization: `Bearer ${token}`
           }
         });
-        if (response.status === 200) {
-          let game = response.data;
-          console.log('logging (placeStone):', game);
-          if (game.id && game.player1 && game.player2) {
-            this.gameId = game.id;
-            this.yourTurn = game.whoseTurn === this.id;
-            this.board = this.fillBoard(game.board);
-            this.historyScore = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
-            this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
-            this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
-          }
-          // set the class of the cell based on the player's turn                                                                                                                                                        
-          const cellClass = (this.yourTurn) ? 'white' : 'black';
-          const cell = document.querySelector(`.board .row:nth-child(${row + 1}) .cell:nth-child(${col + 1})`);
-          cell.classList.add(cellClass);
-
-          // check for game over
-          if (response.data.result !== null && response.data.result !== 0 && response.data.result !== 1) {
-            if (response.data.result === 2) {
-              this.notification = "It's a tie!";
-            } else if (((response.data.result === 3) && (response.data.player1.id === this.id))
-              || ((response.data.result === 4) && (response.data.player2.id === this.id))
-            ) {
-              this.notification = 'You won!';
-            } else {
-              this.notification = 'You lost...';
-            }
-          }
-        }
+        // TODO: Seems no need to get the response
       } catch (error) {
         console.error(error);
       }
