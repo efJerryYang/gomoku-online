@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.efjerryyang.gomokuonline.Constant;
-import me.efjerryyang.gomokuonline.dto.GameDTO;
-import me.efjerryyang.gomokuonline.dto.MatchGetDTO;
-import me.efjerryyang.gomokuonline.dto.MatchPostDTO;
-import me.efjerryyang.gomokuonline.dto.PickDTO;
+import me.efjerryyang.gomokuonline.dto.*;
 import me.efjerryyang.gomokuonline.entity.Game;
 import me.efjerryyang.gomokuonline.entity.Player;
 import me.efjerryyang.gomokuonline.entity.User;
@@ -75,9 +72,8 @@ public class UserController {
 
     @GetMapping("/matching")
     public ResponseEntity<ResponseMatching> getMatchingStatus(@RequestHeader("Authorization") String token) {
-
         String clientId = jwtService.getClientIdFromToken(token);
-        System.out.println("GET: matching (clientId=" + clientId + ")");
+//        System.out.println("GET: matching (clientId=" + clientId + ")");
         User user = userService.getUserByClientId(clientId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -92,6 +88,26 @@ public class UserController {
             return ResponseEntity.ok(new ResponseMatching(null, "No matching"));
         } else {
             return ResponseEntity.ok(new ResponseMatching(opponent, "Matching"));
+        }
+    }
+
+    @PostMapping("/matchConfirm")
+    public ResponseEntity<GameDTO> confirmMatch(@RequestHeader("Authorization") String token, @RequestBody MatchConfirmDTO matchDTO) {
+        String clientId = jwtService.getClientIdFromToken(token);
+        Long userId = userService.getUserByClientId(clientId).getId();
+        System.out.println("POST: matchConfirm (clientId=" + clientId + ")");
+        if (matchDTO.getResult() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        Game game = gameService.getGameByPlayerId(userId);
+        if (game != null && game.getStatus().equals(Constant.GAME_STATUS_PENDING)) {
+            // another player checked the matching status first
+            gameService.updateGameStatus(game.getId(), Constant.GAME_STATUS_PLAYING);
+            return ResponseEntity.ok(new GameDTO(game));
+        } else if (game != null) {
+            return ResponseEntity.ok(new GameDTO(game));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
