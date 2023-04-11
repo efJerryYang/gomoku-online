@@ -28,4 +28,5 @@ public class Constant {
     public static final int GAME_STATUS_IT_IS_A_TIE = 2;
     public static final int GAME_STATUS_PLAYER1_WIN = 3;
     public static final int GAME_STATUS_PLAYER2_WIN = 4;
+    public static final int GAME_EXIT = 5;
 }

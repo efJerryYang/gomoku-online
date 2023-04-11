@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.efjerryyang.gomokuonline.entity.Move;
-import me.efjerryyang.gomokuonline.entity.Player;
 
 @Data
 @NoArgsConstructor
