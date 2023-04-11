@@ -523,18 +523,16 @@ export default {
   display: grid;
   grid-template-columns: repeat(10, 40px);
   grid-template-rows: repeat(10, 40px);
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
 }
 
 .board .cell {
-  display: block;
-  /* background-color: #000000; */
   border-left: 1px solid #000000;
   border-right: 1px solid #000000;
   border-bottom: 1px solid #000000;
   border-top: 1px solid #000000;
-  /* width: 50px; */
-  /* height: 50px; */
+  width: 40px;
+  height: 40px;
 }
 
 .board .cell img {
