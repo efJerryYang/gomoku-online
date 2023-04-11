@@ -27,6 +27,7 @@ public class Game {
             return player1;
         }
     }
+
     public Player getOpponent(Player player) {
         if (Objects.equals(player.getId(), player1.getId())) {
             return player2;

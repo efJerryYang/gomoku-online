@@ -1,6 +1,5 @@
 package me.efjerryyang.gomokuonline.service;
 
-import me.efjerryyang.gomokuonline.Constant;
 import me.efjerryyang.gomokuonline.entity.Game;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +25,7 @@ public class GameService {
     public void removeGameById(Long id) {
         gameList.removeIf(game -> game.getId().equals(id));
     }
+
     public Game getGameByPlayerId(Long id) {
         return gameList.stream().filter(game -> game.getPlayer1().getId().equals(id) || game.getPlayer2().getId().equals(id)).findFirst().orElse(null);
     }

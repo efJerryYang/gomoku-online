@@ -10,7 +10,7 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-//    public static final String SECRET_KEY = CryptoUtil.generateKey();
+    //    public static final String SECRET_KEY = CryptoUtil.generateKey();
     public static final String SECRET_KEY = "mySecretKey";
 
     public String generateToken(String clientId) {
