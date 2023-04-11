@@ -101,6 +101,11 @@ export default {
           // check matching status
           this.checkMatchingStatus();
         }
+      } else {
+        if (!this.yourTurn) // opponent's turn
+          this.checkOpponentMove();
+        else // your turn
+          this.remainingTime--;
       }
       console.log('logging (matchedPlayer):', this.matchedPlayer);
     }, 1000);
@@ -170,7 +175,7 @@ export default {
           console.log('logging (checkMatchingStatus):', game);
           if (game.id && game.player1 && game.player2) {
             this.gameId = game.id;
-            this.yourTurn = game.whosTurn === this.id;
+            this.yourTurn = game.whoseTurn === this.id;
             this.board = this.fillBoard(game.board);
             this.historyScore = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
             this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
@@ -180,6 +185,10 @@ export default {
       } catch (error) {
         console.error(error);
       }
+    },
+    async checkOpponentMove() {
+      // TODO: determine to get entire GameDTO or just the move
+      // For user who submit the move should be just the move and timestamp, but whether another user should only update the move it is not clear
     },
     // handleMatchingConfirmResponse(response) {
     //   if (response.matchWithPlayer && response.data.info.toLowerCase() === 'matching') {
@@ -275,7 +284,7 @@ export default {
           console.log('logging (matchWithPlayer):', game);
           if (game.id && game.player1 && game.player2) {
             this.gameId = game.id;
-            this.yourTurn = game.whosTurn === this.id;
+            this.yourTurn = game.whoseTurn === this.id;
             this.board = this.fillBoard(game.board);
             this.historyScore = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
             this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
@@ -323,7 +332,7 @@ export default {
         });
         if (response.status === 200) {
           this.board = response.data.board;
-          this.yourTurn = response.data.whosTurn === this.id;
+          this.yourTurn = response.data.whoseTurn === this.id;
           this.remainingTime = response.data.remainingTime;
           this.historyScore = `You: ${response.data.player1.score}, Opponent: ${response.data.player2.score}`;
 
