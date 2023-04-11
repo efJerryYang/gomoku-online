@@ -78,7 +78,7 @@ export default {
       matchingList: [],
       yourTurn: false,
       remainingTime: 30,
-      board: [], // Initialize board with empty array of 15x15
+      board: [], // Initialize board with empty array of 10x10
       result: 'You: 0, Opponent: 0',
       gameId: null,
 
@@ -132,21 +132,23 @@ export default {
       // 1 -> whiteStone.gif
       // 2 -> blackStone.gif
       const board = [];
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 10; i++) {
         const row = [];
-        for (let j = 0; j < 15; j++) {
+        for (let j = 0; j < 10; j++) {
           if (responseBoard[i][j] === 0) {
             row.push('src/assets/background.gif')
           } else if (responseBoard[i][j] === 1) {
             row.push('src/assets/whiteStone.gif');
-          } else {
+          } else if (responseBoard[i][j] === 2) {
             row.push('src/assets/blackStone.gif');
+          } else {
+            row.push(null);
           }
         }
         board.push(row);
       }
       return board;
-    }, 
+    },
     // checkMatchingStatus
     async checkMatchingStatus() {
       try {
@@ -159,6 +161,7 @@ export default {
         if (response.status === 200) {
           // this.handleMatchingConfirmResponse(response);
           let game = response.data;
+          console.log('logging:', game);
           if (game.id && game.player1 && game.player2) {
             this.gameId = game.id;
             this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
@@ -167,7 +170,7 @@ export default {
             this.result = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
             this.remainingTime = game.remainingTime;
           }
-          
+
         }
       } catch (error) {
         console.error(error);
@@ -385,8 +388,8 @@ export default {
     },
     createEmptyBoard() {
       const board = [];
-      for (let i = 0; i < 15; i++) {
-        board.push(new Array(15).fill('src/assets/background.gif'));
+      for (let i = 0; i < 10; i++) {
+        board.push(new Array(10).fill('src/assets/background.gif'));
       }
       return board;
     },
@@ -518,9 +521,9 @@ export default {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(10, 50px);
-  grid-template-rows: repeat(10, 50px);
-  margin-bottom: 20px;
+  grid-template-columns: repeat(10, 40px);
+  grid-template-rows: repeat(10, 40px);
+  margin-bottom: 10px;
 }
 
 .board .cell {
