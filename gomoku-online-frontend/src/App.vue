@@ -34,7 +34,7 @@
     <div class="game" v-else>
       <div class="board">
         <div class="result-panel">
-          <div class="result">{{ result }}</div>
+          <div class="result">{{ historyScore }}</div>
         </div>
         <div class="status">
           <div class="you" :class="yourTurn ? 'bold' : ''">You: {{ username }}</div>
@@ -84,7 +84,8 @@ export default {
       yourTurn: false,
       remainingTime: 30,
       board: [], // Initialize board with empty array of 10x10
-      result: 'You: 0, Opponent: 0',
+      result: 0,
+      historyScore: 'You: 0, Opponent: 0',
       gameId: null,
 
       showPopup: false,
@@ -112,6 +113,19 @@ export default {
     }, 1000);
   },
   methods: {
+    init() {
+      this.username = '';
+      this.id = null;
+      this.matchedPlayer = null;
+      this.notification = '';
+      this.matchingList = [];
+      this.yourTurn = false;
+      this.remainingTime = 30;
+      this.board = [];
+      this.result = 0;
+      this.historyScore = 'You: 0, Opponent: 0';
+      this.gameId = null;
+    },
     async refreshMatchingList() {
       try {
         // const token = await this.getJwtToken();
@@ -178,9 +192,18 @@ export default {
             this.gameId = game.id;
             this.yourTurn = game.whoseTurn === this.id;
             this.board = this.fillBoard(game.board);
-            this.historyScore = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
             this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
-            this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
+            let you;
+            let opponent;
+            if (game.player1.id === this.id) {
+              you = game.player1;
+              opponent = game.player2;
+            } else {
+              you = game.player2;
+              opponent = game.player1;
+            }
+            this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
+            this.matchedPlayer = opponent.id;
           }
         }
       } catch (error) {
@@ -205,15 +228,25 @@ export default {
             this.gameId = game.id;
             this.yourTurn = game.whoseTurn === this.id;
             this.board = this.fillBoard(game.board);
-            this.historyScore = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
             this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
-            this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
+            let you;
+            let opponent;
+            if (game.player1.id === this.id) {
+              you = game.player1;
+              opponent = game.player2;
+            } else {
+              you = game.player2;
+              opponent = game.player1;
+            }
+            this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
+            this.matchedPlayer = opponent.id;
             //     // Game info
             // public static final int GAME_STATUS_PENDING = 0;
             // public static final int GAME_STATUS_PLAYING = 1;
             // public static final int GAME_STATUS_IT_IS_A_TIE = 2;
             // public static final int GAME_STATUS_PLAYER1_WIN = 3;
             // public static final int GAME_STATUS_PLAYER2_WIN = 4;
+            // public static final int GAME_STATUS = 5;
             if (game.result > 1) {
               if (game.result === 2) {
                 this.notification = 'It is a tie';
@@ -225,6 +258,8 @@ export default {
                 this.notification = 'You lost...';
               } else if (game.result === 4 && this.id === game.player1.id) {
                 this.notification = 'You lost...';
+              } else if (game.result === 5) {
+                this.init()
               }
             }
           }
@@ -330,9 +365,18 @@ export default {
             this.gameId = game.id;
             this.yourTurn = game.whoseTurn === this.id;
             this.board = this.fillBoard(game.board);
-            this.historyScore = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
             this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
-            this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
+            let you;
+            let opponent;
+            if (game.player1.id === this.id) {
+              you = game.player1;
+              opponent = game.player2;
+            } else {
+              you = game.player2;
+              opponent = game.player1;
+            }
+            this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
+            this.matchedPlayer = opponent.id;
           }
         }
       } catch (error) {
@@ -383,20 +427,33 @@ export default {
     async startNewRound() {
       try {
         const token = await this.getJwtToken();
-        const response = await axios.post('/api/game', {
-          id: this.gameId,
-          clear: true
+        const response = await axios.post('/api/game/new', {
+          gameId: this.gameId
         }, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
         if (response.status === 200) {
-          this.board = response.data.board;
-          this.yourTurn = response.data.yourTurn;
-          this.remainingTime = response.data.remainingTime;
-          this.result = `You: ${response.data.player1Score}, Opponent: ${response.data.player2Score}`;
-          this.notification = '';
+          let game = response.data;
+          console.log('logging (startNewRound):', game);
+          if (game.id && game.player1 && game.player2) {
+            this.gameId = game.id;
+            this.yourTurn = game.whoseTurn === this.id;
+            this.board = this.fillBoard(game.board);
+            this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
+            let you;
+            let opponent;
+            if (game.player1.id === this.id) {
+              you = game.player1;
+              opponent = game.player2;
+            } else {
+              you = game.player2;
+              opponent = game.player1;
+            }
+            this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
+            this.matchedPlayer = opponent.id;
+          }
         }
       } catch (error) {
         console.error(error);
@@ -406,19 +463,16 @@ export default {
       try {
         const token = await this.getJwtToken();
         const response = await axios.post('/api/game/exit', {
-          id: this.gameId
+          gameId: this.gameId
         }, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
         if (response.status === 200) {
-          this.notification = 'Successfully exited the game';
-          this.matchedPlayer = null;
-          this.gameId = null;
-          this.board = this.createEmptyBoard();
-          this.result = 'You: 0, Opponent: 0';
-          this.notification = '';
+          let game = response.data;
+          console.log('logging (exitGame):', game);
+          this.init();
         }
       } catch (error) {
         console.error(error);
