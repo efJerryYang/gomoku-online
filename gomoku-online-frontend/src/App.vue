@@ -47,7 +47,7 @@
           </div>
         </div>
         <div class="result-panel">
-          <div class="result">{{ result }}</div>
+          <div class="result">{{ notification }}</div>
           <div class="buttons">
             <button @click="startNewRound"> Start New Round </button>
             <button @click="exitGame"> Exit Game </button>
@@ -172,10 +172,10 @@ export default {
             this.matchedPlayer = game.player1.id === this.id ? game.player2 : game.player1;
             this.yourTurn = game.whosTurn === this.id;
             this.board = this.fillBoard(game.board);
-            this.result = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
+            this.historyScore = `You: ${game.player1.score}, Opponent: ${game.player2.score}`;
             this.remainingTime = game.remainingTime;
+            this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
           }
-
         }
       } catch (error) {
         console.error(error);
@@ -320,9 +320,9 @@ export default {
         });
         if (response.status === 200) {
           this.board = response.data.board;
-          this.yourTurn = response.data.yourTurn;
+          this.yourTurn = response.data.whosTurn === this.id;
           this.remainingTime = response.data.remainingTime;
-          this.result = `You: ${response.data.player1Score}, Opponent: ${response.data.player2Score}`;
+          this.historyScore = `You: ${response.data.player1.score}, Opponent: ${response.data.player2.score}`;
 
           // set the class of the cell based on the player's turn                                                                                                                                                        
           const cellClass = response.data.turn === 1 ? 'white' : 'black';
@@ -330,16 +330,15 @@ export default {
           cell.classList.add(cellClass);
 
           // check for game over
-          if (response.data.result !== null) {
-            if (response.data.result === 0) {
+          if (response.data.result !== null && response.data.result !== 0 && response.data.result !== 1) {
+            if (response.data.result === 2) {
               this.notification = "It's a tie!";
-            } else if (
-              (response.data.result === 1 && response.data.yourTurn) ||
-              (response.data.result === 2 && !response.data.yourTurn)
+            } else if (((response.data.result === 3) && (response.data.player1.id === this.id))
+              || ((response.data.result === 4) && (response.data.player2.id === this.id))
             ) {
-              this.notification = 'You win!';
+              this.notification = 'You won!';
             } else {
-              this.notification = 'You lose!';
+              this.notification = 'You lost...';
             }
           }
         }
