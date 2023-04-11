@@ -3,11 +3,11 @@ package me.efjerryyang.gomokuonline.service;
 import me.efjerryyang.gomokuonline.Constant;
 import me.efjerryyang.gomokuonline.entity.Game;
 import me.efjerryyang.gomokuonline.entity.Move;
+import me.efjerryyang.gomokuonline.entity.Player;
+import me.efjerryyang.gomokuonline.entity.User;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class GameService {
@@ -19,6 +19,52 @@ public class GameService {
 
     public void addGame(Game game) {
         gameList.add(game);
+    }
+
+    public Game createGame(User user1, User user2) {
+        Game game = new Game();
+        game.setId((long) (Math.random() * 1_0000_0000));
+        game.setPlayer1(new Player(user1.getUsername(), user1.getId(), 0));
+        game.setPlayer2(new Player(user2.getUsername(), user2.getId(), 0));
+        game.setTurn(1);
+
+        // game.setBoard(new Integer[Constant.BOARD_SIZE][Constant.BOARD_SIZE]);
+        Integer zero = Constant.BACKGROUND_CELL;
+        Integer[][] board = new Integer[Constant.BOARD_SIZE][Constant.BOARD_SIZE];
+        for (Integer[] row : board) {
+            Arrays.fill(row, zero);
+        }
+        game.setBoard(board);
+        game.setStatus(Constant.GAME_STATUS_PENDING);
+        game.setWhoFirst((int) (Math.random() * 2) + 1); // (int) [1.0, 3.0) => 1 or 2
+        switch (game.getWhoFirst()) {
+            case 1 -> System.out.println("Player " + game.getPlayer1().getUsername() + " goes first");
+            case 2 -> System.out.println("Player " + game.getPlayer2().getUsername() + " goes first");
+        }
+        game.setMoves(new ArrayList<>());
+        return game;
+    }
+
+    public Game createGame(Player player1, Player player2, Integer whoFirst) {
+        Game game = new Game();
+        game.setId((long) (Math.random() * 1_0000_0000));
+
+        game.setPlayer1(player1);
+        game.setPlayer2(player2);
+
+        game.setTurn(1);
+        Integer zero = Constant.BACKGROUND_CELL;
+        Integer[][] board = new Integer[Constant.BOARD_SIZE][Constant.BOARD_SIZE];
+        for (Integer[] row : board) {
+            Arrays.fill(row, zero);
+        }
+        game.setBoard(board);
+        game.setStatus(Constant.GAME_STATUS_PENDING);
+
+        game.setWhoFirst(whoFirst == 1 ? 2 : 1);
+
+        game.setMoves(new ArrayList<>());
+        return game;
     }
 
     public Game getGameById(Long id) {
@@ -49,6 +95,7 @@ public class GameService {
         // update game move
         game.getMoves().add(move);
         game.getBoard()[move.getX()][move.getY()] = game.getPlayerStoneType(move.getPlayer());
+        System.out.println("(turn=" + game.getTurn() + ") " + "Player " + move.getPlayer().getUsername() + " move to " + move.getX() + ", " + move.getY());
         // check if game end
         Integer gameStatus = checkGameStatus(game);
         game.setTurn(game.getTurn() + 1);
@@ -57,11 +104,19 @@ public class GameService {
             game.setStatus(gameStatus);
             System.out.print("Game end: ");
             switch (gameStatus) {
-                case Constant.GAME_STATUS_PLAYER1_WIN ->
-                        System.out.println("Player 1 win (" + game.getPlayer1().getUsername() + ")");
-                case Constant.GAME_STATUS_PLAYER2_WIN ->
-                        System.out.println("Player 2 win (" + game.getPlayer2().getUsername() + ")");
-                case Constant.GAME_STATUS_IT_IS_A_TIE -> System.out.println("It is a tie");
+                case Constant.GAME_STATUS_PLAYER1_WIN -> {
+                    game.getPlayer1().setScore(game.getPlayer1().getScore() + 1);
+                    System.out.println("Player 1 win (" + game.getPlayer1().getUsername() + ")");
+                }
+                case Constant.GAME_STATUS_PLAYER2_WIN -> {
+                    game.getPlayer2().setScore(game.getPlayer2().getScore() + 1);
+                    System.out.println("Player 2 win (" + game.getPlayer2().getUsername() + ")");
+                }
+                case Constant.GAME_STATUS_IT_IS_A_TIE -> {
+                    game.getPlayer1().setScore(game.getPlayer1().getScore() + 1);
+                    game.getPlayer2().setScore(game.getPlayer2().getScore() + 1);
+                    System.out.println("It is a tie");
+                }
             }
         }
     }
@@ -94,6 +149,10 @@ public class GameService {
             return Constant.GAME_STATUS_IT_IS_A_TIE;
         }
         return Constant.GAME_STATUS_PLAYING;
+    }
+
+    public void exitGame(Game game) {
+        game.setStatus(Constant.GAME_EXIT);
     }
 //    // Dynamic Programming attempts
 //    public Integer checkGameStatus(Game game) {

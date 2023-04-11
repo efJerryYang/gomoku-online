@@ -3,18 +3,19 @@ package me.efjerryyang.gomokuonline.service;
 import me.efjerryyang.gomokuonline.Constant;
 import me.efjerryyang.gomokuonline.dto.MatchGetDTO;
 import me.efjerryyang.gomokuonline.entity.Game;
-import me.efjerryyang.gomokuonline.entity.Player;
 import me.efjerryyang.gomokuonline.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class UserService {
     private final List<User> userList;
     private final List<MatchGetDTO> waitingList;
+    @Autowired
+    private GameService gameService;
 
     public UserService() {
         userList = new ArrayList<>();
@@ -96,29 +97,8 @@ public class UserService {
         // change status to playing
         userList.stream().filter(user -> user.getId().equals(playerId1)).findFirst().ifPresent(user -> user.setStatus(Constant.USER_STATUS_PLAYING));
         userList.stream().filter(user -> user.getId().equals(playerId2)).findFirst().ifPresent(user -> user.setStatus(Constant.USER_STATUS_PLAYING));
-
-        Game newGame = new Game();
-        newGame.setId((long) (Math.random() * 1_0000_0000));
         User user1 = getUserById(playerId1);
         User user2 = getUserById(playerId2);
-        newGame.setPlayer1(new Player(user1.getUsername(), user1.getId(), 0));
-        newGame.setPlayer2(new Player(user2.getUsername(), user2.getId(), 0));
-        newGame.setTurn(1);
-
-        // newGame.setBoard(new Integer[Constant.BOARD_SIZE][Constant.BOARD_SIZE]);
-        Integer zero = Constant.BACKGROUND_CELL;
-        Integer[][] board = new Integer[Constant.BOARD_SIZE][Constant.BOARD_SIZE];
-        for (Integer[] row : board) {
-            Arrays.fill(row, zero);
-        }
-        newGame.setBoard(board);
-        newGame.setStatus(Constant.GAME_STATUS_PENDING);
-        newGame.setWhoFirst((int) (Math.random() * 2) + 1); // (int) [1.0, 3.0) => 1 or 2
-        switch (newGame.getWhoFirst()) {
-            case 1 -> System.out.println("Player " + newGame.getPlayer1().getUsername() + " goes first");
-            case 2 -> System.out.println("Player " + newGame.getPlayer2().getUsername() + " goes first");
-        }
-        newGame.setMoves(new ArrayList<>());
-        return newGame;
+        return gameService.createGame(user1, user2);
     }
 }

@@ -5,6 +5,7 @@ import me.efjerryyang.gomokuonline.Constant;
 import me.efjerryyang.gomokuonline.dto.CheckGameDTO;
 import me.efjerryyang.gomokuonline.dto.GameDTO;
 import me.efjerryyang.gomokuonline.dto.MoveDTO;
+import me.efjerryyang.gomokuonline.dto.NewRoundDTO;
 import me.efjerryyang.gomokuonline.entity.Game;
 import me.efjerryyang.gomokuonline.entity.Move;
 import me.efjerryyang.gomokuonline.entity.Player;
@@ -60,8 +61,8 @@ public class GameController {
 //            }
             // update game
             gameService.updateGameMove(game, move);
-            System.out.println("(turn=" + game.getTurn() + ") " + "Player " + player.getUsername() + " move to " + move.getX() + ", " + move.getY());
             // return updated game board.
+            System.out.println("Player 1: " + game.getPlayer1().getScore() + " Player 2: " + game.getPlayer2().getScore());
             return ResponseEntity.ok().body(new GameDTO(game));
         } catch (JwtException | IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -81,6 +82,41 @@ public class GameController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
             return ResponseEntity.ok().body(new GameDTO(game));
+        } catch (JwtException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @PostMapping("/game/new")
+    public ResponseEntity<GameDTO> newGame(@RequestHeader("Authorization") String token, @RequestBody NewRoundDTO newRoundDTO) {
+        try {
+            String clientId = jwtService.getClientIdFromToken(token);
+            User user = userService.getUserByClientId(clientId);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+            Game game = gameService.getGameById(newRoundDTO.getGameId());
+            Game newGame = gameService.createGame(game.getPlayer1(), game.getPlayer2(), game.getWhoFirst());
+            return ResponseEntity.ok().body(new GameDTO(newGame));
+        } catch (JwtException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @PostMapping("/game/exit")
+    public ResponseEntity<GameDTO> exitGame(@RequestHeader("Authorization") String token, @RequestBody CheckGameDTO checkGameDTO) {
+        try {
+            String clientId = jwtService.getClientIdFromToken(token);
+            User user = userService.getUserByClientId(clientId);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+            Game game = gameService.getGameById(checkGameDTO.getGameId());
+            if (game == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+            gameService.exitGame(game);
+            return ResponseEntity.ok().build();
         } catch (JwtException | IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
