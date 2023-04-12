@@ -390,21 +390,33 @@ export default {
       try {
         const token = await this.getJwtToken();
         const response = await axios.post('/api/match/dice', {
-          username: this.username
+          userId: this.userId
         }, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
         if (response.status === 200) {
-          this.notification = 'Successfully matched with a player';
-          this.matchedPlayer = response.data;
-          this.board = response.data.board;
-          this.yourTurn = response.data.yourTurn;
-          this.remainingTime = response.data.remainingTime;
-          this.gameId = response.data.id;
-        }
-      } catch (error) {
+          let game = response.data;
+          console.log('logging (matchWithRandomPlayer):', game);
+          if (game.id && game.player1 && game.player2) {
+            this.gameId = game.id;
+            this.yourTurn = game.whoseTurn === this.id;
+            this.board = this.fillBoard(game.board);
+            this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
+            let you;
+            let opponent;
+            if (game.player1.id === this.id) {
+              you = game.player1;
+              opponent = game.player2;
+            } else {
+              you = game.player2;
+              opponent = game.player1;
+            }
+            this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
+            this.matchedPlayer = opponent;
+          }
+        }      } catch (error) {
         this.notification = error.response.data.msg;
       }
     },

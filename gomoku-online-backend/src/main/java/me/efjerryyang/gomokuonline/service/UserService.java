@@ -25,6 +25,10 @@ public class UserService {
     }
 
     private void initUserList() {
+        // Do nothing because no database
+    }
+
+    private void initTestUserList() {
         List<String> usernameList = List.of("testUser1", "testUser2", "testUser3", "testUser4", "testUser5");
         for (String username : usernameList) {
             if (pickUsername(username, username) != null) {
@@ -99,6 +103,26 @@ public class UserService {
         userList.stream().filter(user -> user.getId().equals(playerId2)).findFirst().ifPresent(user -> user.setStatus(Constant.USER_STATUS_PLAYING));
         User user1 = getUserById(playerId1);
         User user2 = getUserById(playerId2);
+        return gameService.createGame(user1, user2);
+    }
+
+    public Game matchWithRandomPlayer(Long playerId) {
+        if (playerId == null) {
+            return null;
+        }
+        // TODO: randomly select a user from waiting list and remove it from waiting
+        if (waitingList.isEmpty()) {
+            return null;
+        }
+
+        waitingList.removeIf(matchGetDTO -> matchGetDTO.getId().equals(playerId));
+        int index = (int) (waitingList.size() * Math.random()); // [0.0, 1.0)
+        Long opponentId = waitingList.remove(index).getId();
+
+        userList.stream().filter(user -> user.getId().equals(playerId)).findFirst().ifPresent(user -> user.setStatus(Constant.USER_STATUS_PLAYING));
+        userList.stream().filter(user -> user.getId().equals(opponentId)).findFirst().ifPresent(user -> user.setStatus(Constant.USER_STATUS_PLAYING));
+        User user1 = getUserById(playerId);
+        User user2 = getUserById(opponentId);
         return gameService.createGame(user1, user2);
     }
 }

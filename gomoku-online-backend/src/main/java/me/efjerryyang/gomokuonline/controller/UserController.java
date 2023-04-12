@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.efjerryyang.gomokuonline.Constant;
-import me.efjerryyang.gomokuonline.dto.GameDTO;
-import me.efjerryyang.gomokuonline.dto.MatchGetDTO;
-import me.efjerryyang.gomokuonline.dto.MatchPostDTO;
-import me.efjerryyang.gomokuonline.dto.PickDTO;
+import me.efjerryyang.gomokuonline.dto.*;
 import me.efjerryyang.gomokuonline.entity.Game;
 import me.efjerryyang.gomokuonline.entity.Player;
 import me.efjerryyang.gomokuonline.entity.User;
@@ -93,8 +90,7 @@ public class UserController {
         if (matchDTO.getUserId() == null || matchDTO.getOpponentId() == null || matchDTO.getUserId().equals(matchDTO.getOpponentId())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-
-        Game game = gameService.getGameByPlayerId(matchDTO.getUserId());
+        Game game = gameService.getGameByPlayerId(matchDTO.getUserId()); // What does this use for?
         if (game != null && game.getStatus().equals(Constant.GAME_STATUS_PENDING)) {
             // another player checked the matching status first
             game.setStatus(Constant.GAME_STATUS_PLAYING);
@@ -106,6 +102,25 @@ public class UserController {
         gameService.addGame(game);
         if (game == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } else {
+            return ResponseEntity.ok(new GameDTO(game));
+        }
+    }
+
+    @PostMapping("/match/dice")
+    public ResponseEntity<GameDTO> matchWithRandomPlayer(@RequestBody DiceDTO diceDTO) {
+        if (diceDTO.getUserId() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        Game game = gameService.getGameByPlayerId(diceDTO.getUserId()); // What does this use for?
+        if (game!= null && game.getStatus().equals(Constant.GAME_STATUS_PENDING)){
+            game.setStatus(Constant.GAME_STATUS_PLAYING);
+            return ResponseEntity.ok(new GameDTO(game));
+        }
+        game = userService.matchWithRandomPlayer(diceDTO.getUserId());
+        if (game == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
             return ResponseEntity.ok(new GameDTO(game));
         }
@@ -146,16 +161,4 @@ public class UserController {
         private Player matchedPlayer;
         private String info;
     }
-
-    //
-//    @PostMapping("/match/dice")
-//    public ResponseEntity<GameDTO> matchWithRandomPlayer(@RequestBody PickDTO pickDTO) {
-//        GameDTO gameDTO = userService.matchWithRandomPlayer(pickDTO.getUsername());
-//        if (gameDTO == null) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        } else {
-//            return ResponseEntity.ok(gameDTO);
-//        }
-//    }
-
 }
