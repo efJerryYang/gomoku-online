@@ -21,6 +21,24 @@ public class GameService {
         gameList.add(game);
     }
 
+    public List<Game> getGameList() {
+        return gameList;
+    }
+
+    public Game findAndJoinPendingGame(Player player) {
+        // try finding pending game for player
+        // namely, either player1 or player2 should be player
+        Game game = gameList.stream()
+                .filter(g -> g.getStatus().equals(Constant.GAME_STATUS_PENDING))
+                .filter(g -> g.getPlayer1().getId().equals(player.getId()) || g.getPlayer2().getId().equals(player.getId()))
+                .findFirst()
+                .orElse(null);
+        if (game != null) {
+            game.setStatus(Constant.GAME_STATUS_PLAYING);
+        }
+        return game;
+    }
+
     public Game createGame(User user1, User user2) {
         Game game = new Game();
         game.setId((long) (Math.random() * 1_0000_0000));

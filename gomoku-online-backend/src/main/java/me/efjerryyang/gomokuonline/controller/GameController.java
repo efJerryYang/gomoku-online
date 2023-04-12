@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
+
 @RestController
 public class GameController {
     @Autowired
@@ -81,6 +83,24 @@ public class GameController {
             if (game == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
+            switch (game.getStatus()) {
+                case Constant.GAME_STATUS_PENDING -> System.out.println("Game is waiting for another player");
+                case Constant.GAME_STATUS_PLAYER1_WIN, Constant.GAME_STATUS_PLAYER2_WIN, Constant.GAME_STATUS_IT_IS_A_TIE -> {
+                    System.out.println("Game is over");
+                    // try finding another pending game
+                    Player player = game.getPlayerByPlayerId(user.getId());
+                    Game newGame = gameService.findAndJoinPendingGame(player);
+                    System.out.println("New game: " + newGame);
+                    return ResponseEntity.ok().body(new GameDTO(Objects.requireNonNullElse(newGame, game)));
+                }
+                case Constant.GAME_EXIT -> {
+                    return ResponseEntity.ok().body(new GameDTO());
+                }
+            }
+            System.out.println("Show game list:");
+            for (Game game1: gameService.getGameList()){
+                System.out.println(game1);
+            }
             return ResponseEntity.ok().body(new GameDTO(game));
         } catch (JwtException | IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -97,6 +117,7 @@ public class GameController {
             }
             Game game = gameService.getGameById(newRoundDTO.getGameId());
             Game newGame = gameService.createGame(game.getPlayer1(), game.getPlayer2(), game.getWhoFirst());
+            gameService.addGame(newGame);
             return ResponseEntity.ok().body(new GameDTO(newGame));
         } catch (JwtException | IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
