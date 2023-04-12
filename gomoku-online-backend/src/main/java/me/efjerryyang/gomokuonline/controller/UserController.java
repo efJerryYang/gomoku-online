@@ -100,6 +100,7 @@ public class UserController {
         }
         game = userService.matchPlayers(matchDTO.getUserId(), matchDTO.getOpponentId());
         gameService.addGame(game);
+        System.out.println("New Game:" + game);
         if (game == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } else {
@@ -114,11 +115,13 @@ public class UserController {
         }
 
         Game game = gameService.getGameByPlayerId(diceDTO.getUserId()); // What does this use for?
-        if (game!= null && game.getStatus().equals(Constant.GAME_STATUS_PENDING)){
+        if (game != null && game.getStatus().equals(Constant.GAME_STATUS_PENDING)) {
             game.setStatus(Constant.GAME_STATUS_PLAYING);
             return ResponseEntity.ok(new GameDTO(game));
         }
         game = userService.matchWithRandomPlayer(diceDTO.getUserId());
+        gameService.addGame(game);
+        System.out.println("New Game:" + game);
         if (game == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {

@@ -106,18 +106,28 @@ public class UserService {
         return gameService.createGame(user1, user2);
     }
 
-    public Game matchWithRandomPlayer(Long playerId) {
+    public synchronized Game matchWithRandomPlayer(Long playerId) {
         if (playerId == null) {
             return null;
         }
-        // TODO: randomly select a user from waiting list and remove it from waiting
-        if (waitingList.isEmpty()) {
+        if (waitingList.size() < 2) {
             return null;
         }
 
         waitingList.removeIf(matchGetDTO -> matchGetDTO.getId().equals(playerId));
         int index = (int) (waitingList.size() * Math.random()); // [0.0, 1.0)
-        Long opponentId = waitingList.remove(index).getId();
+        Long opponentId = waitingList.get(index).getId();
+
+        // Check if the opponent is the same as the player
+        if (opponentId.equals(playerId)) {
+            for (int i = 0; i < waitingList.size(); i++) {
+                if (!opponentId.equals(waitingList.get(i).getId())) {
+                    index = i;
+                    break;
+                }
+            }
+        }
+        waitingList.remove(index);
 
         userList.stream().filter(user -> user.getId().equals(playerId)).findFirst().ifPresent(user -> user.setStatus(Constant.USER_STATUS_PLAYING));
         userList.stream().filter(user -> user.getId().equals(opponentId)).findFirst().ifPresent(user -> user.setStatus(Constant.USER_STATUS_PLAYING));
@@ -125,4 +135,5 @@ public class UserService {
         User user2 = getUserById(opponentId);
         return gameService.createGame(user1, user2);
     }
+
 }
