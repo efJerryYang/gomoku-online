@@ -94,7 +94,7 @@ public class GameController {
                     return ResponseEntity.ok().body(new GameDTO(Objects.requireNonNullElse(newGame, game)));
                 }
                 case Constant.GAME_EXIT -> {
-                    return ResponseEntity.ok().body(new GameDTO());
+                    return ResponseEntity.ok().build();
                 }
             }
             System.out.println("Show game list:");

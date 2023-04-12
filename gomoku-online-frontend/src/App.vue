@@ -262,6 +262,9 @@ export default {
                 this.init()
               }
             }
+          } else {
+            // current game become invalid
+            this.init();
           }
         }
       } catch (error) {
