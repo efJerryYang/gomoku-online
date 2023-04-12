@@ -46,7 +46,6 @@ public class GameController {
             Game game = gameService.getGameById(moveDTO.getGameId());
             if (game.getStatus() != Constant.GAME_STATUS_PLAYING) {
                 // if not playing, cannot move
-                // TODO: add error message for this
                 switch (game.getStatus()) {
                     case Constant.GAME_STATUS_PENDING -> System.out.println("Game is waiting for another player");
                     case Constant.GAME_STATUS_PLAYER1_WIN -> System.out.println("Game is over, player 1 win");
@@ -57,10 +56,6 @@ public class GameController {
             }
             Player player = game.getPlayerByPlayerId(user.getId());
             Move move = new Move(player, moveDTO);
-//            if (game.getMoves().get(game.getMoves().size() - 1).getPlayer().getId().equals(player.getId())) {
-//                // if last move is from the same player, cannot move
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//            }
             // update game
             gameService.updateGameMove(game, move);
             // return updated game board.
