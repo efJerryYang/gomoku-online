@@ -12,9 +12,9 @@
     </parent>
     <groupId>me.efjerryyang</groupId>
     <artifactId>gomoku-online</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0</version>
     <name>gomoku-online</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Gomoku Online Game</description>
     <properties>
         <java.version>17</java.version>
     </properties>
