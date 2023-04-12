@@ -98,7 +98,7 @@ public class GameController {
                 }
             }
             System.out.println("Show game list:");
-            for (Game game1: gameService.getGameList()){
+            for (Game game1 : gameService.getGameList()) {
                 System.out.println(game1);
             }
             return ResponseEntity.ok().body(new GameDTO(game));
