@@ -203,7 +203,7 @@ export default {
               opponent = game.player1;
             }
             this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
-            this.matchedPlayer = opponent.id;
+            this.matchedPlayer = opponent;
           }
         }
       } catch (error) {
@@ -239,7 +239,7 @@ export default {
               opponent = game.player1;
             }
             this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
-            this.matchedPlayer = opponent.id;
+            this.matchedPlayer = opponent;
             //     // Game info
             // public static final int GAME_STATUS_PENDING = 0;
             // public static final int GAME_STATUS_PLAYING = 1;
@@ -376,7 +376,7 @@ export default {
               opponent = game.player1;
             }
             this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
-            this.matchedPlayer = opponent.id;
+            this.matchedPlayer = opponent;
           }
         }
       } catch (error) {
@@ -452,7 +452,7 @@ export default {
               opponent = game.player1;
             }
             this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
-            this.matchedPlayer = opponent.id;
+            this.matchedPlayer = opponent;
           }
         }
       } catch (error) {
