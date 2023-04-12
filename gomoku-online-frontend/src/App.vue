@@ -390,7 +390,7 @@ export default {
       try {
         const token = await this.getJwtToken();
         const response = await axios.post('/api/match/dice', {
-          userId: this.userId
+          userId: this.id
         }, {
           headers: {
             Authorization: `Bearer ${token}`
