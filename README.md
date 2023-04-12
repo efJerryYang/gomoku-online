@@ -2,18 +2,38 @@
 
 ## Introduction
 
-> Skipped.
+Gomoku Online - HITSZ Distributed Systems Course Project 1 for 2023 Spring.
 
-## Frontend
+## Tech Stack
 
-| Tech stack                   | Description                                                                             |
-| ---------------------------- | --------------------------------------------------------------------------------------- |
-| [Vue.js](https://vuejs.org/) | A progressive JavaScript framework used for building user interfaces and single-page applications. It provides an intuitive and flexible structure that can be used to build modern web applications. |
+| Tech stack                                            | Description                                                                                        |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| [Vue.js](https://vuejs.org/)                          | A progressive JavaScript framework used for building user interfaces and single-page applications. |
+| [Spring Boot](https://spring.io/projects/spring-boot) | A popular Java-based open-source framework used for building web applications.                     |
 
-## Backend
-
-| Tech stack                                            | Description                                                                                   |
-| ----------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| [Spring Boot](https://spring.io/projects/spring-boot) | A popular Java-based open-source framework used for building web applications. It eliminates boilerplate code and configuration, making it easy to set up and get started with. |
 <!-- | [Mybatis](https://mybatis.org/mybatis-3/)             | A persistence framework with support for custom SQL, stored procedures and advanced mappings. | -->
 <!-- | [MySQL](https://www.mysql.com/)                       | A relational database management system.                                                      | -->
+
+### How to run
+
+Frontend is a `Vue.js` project, the built `dist` directory can be loaded by web server like `nginx`. Or you can use `npm` to run it locally as follows:
+
+```sh
+cd gomoku-online-frontend/  # Goto frontend working directory
+npm install  # Project setup
+npm run dev  # Compile and hot-reload for development
+```
+
+Backend is a `Spring Boot` project. It is managed by `maven`, so you can run the following to build it manually:
+
+```sh
+cd gomoku-online-backend/  # Goto backend working directory
+mvn install  # Install necessary dependencies
+mvn clean package  # Build an executable jar file for the backend project
+```
+
+Alternatively, you can directly run the released `jar` binary in the following way. It is important to notice that you should replace the `<version>` with the exact version of the `jar` file (e.g. `0.1.0`).
+
+```sh
+java -jar gomoku-online-<version>.jar # Run the jar file
+```
