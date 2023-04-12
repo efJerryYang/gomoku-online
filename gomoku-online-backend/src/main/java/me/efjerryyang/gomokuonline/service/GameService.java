@@ -172,52 +172,5 @@ public class GameService {
     public void exitGame(Game game) {
         game.setStatus(Constant.GAME_EXIT);
     }
-//    // Dynamic Programming attempts
-//    public Integer checkGameStatus(Game game) {
-//        Integer[][] board = game.getBoard();
-//        int[][][] dp = new int[Constant.BOARD_SIZE][Constant.BOARD_SIZE][6];
-//        for (int i = 0; i < Constant.BOARD_SIZE; i++) {
-//            for (int j = 0; j < Constant.BOARD_SIZE; j++) {
-//                Arrays.fill(dp[i][j], 0);
-//            }
-//        }
-//
-//        int lastX = -1, lastY = -1;
-//        for (int i = 0; i < Constant.BOARD_SIZE; i++) {
-//            for (int j = 0; j < Constant.BOARD_SIZE; j++) {
-//                if (!Objects.equals(board[i][j], null)) {
-//                    int color = board[i][j];
-//                    for (int k = 1; k <= 5; k++) {
-//                        if (i >= k - 1 && dp[i - (k - 1)][j][k - 1] > 0) {
-//                            dp[i][j][k] = dp[i - (k - 1)][j][k - 1] + 1;
-//                        }
-//                        if (j >= k - 1 && dp[i][j - (k - 1)][k - 1] > 0) {
-//                            dp[i][j][k] = dp[i][j - (k - 1)][k - 1] + 1;
-//                        }
-//                        if (i >= k - 1 && j >= k - 1 && dp[i - (k - 1)][j - (k - 1)][k - 1] > 0) {
-//                            dp[i][j][k] = dp[i - (k - 1)][j - (k - 1)][k - 1] + 1;
-//                        }
-//                        if (i >= k - 1 && j <= Constant.BOARD_SIZE - k && dp[i - (k - 1)][j + (k - 1)][k - 1] > 0) {
-//                            dp[i][j][k] = dp[i - (k - 1)][j + (k - 1)][k - 1] + 1;
-//                        }
-//                        if (dp[i][j][k] >= k) {
-//                            if (lastX == -1 || dp[lastX][lastY][k] < dp[i][j][k] || (dp[lastX][lastY][k] == dp[i][j][k] && board[lastX][lastY] != color)) {
-//                                lastX = i;
-//                                lastY = j;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        if (lastX != -1 && dp[lastX][lastY][5] >= 5) {
-//            return board[lastX][lastY] + Constant.GAME_STATUS_IT_IS_A_TIE;
-//        } else if (game.getTurn() == Constant.BOARD_SIZE * Constant.BOARD_SIZE) {
-//            return Constant.GAME_STATUS_IT_IS_A_TIE;
-//        } else {
-//            return Constant.GAME_STATUS_PLAYING;
-//        }
-//    }
 
 }

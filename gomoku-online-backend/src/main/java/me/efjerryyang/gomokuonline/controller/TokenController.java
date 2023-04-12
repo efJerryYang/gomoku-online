@@ -18,7 +18,6 @@ public class TokenController {
     @PostMapping("/token")
     public TokenResponse getToken(@RequestBody TokenDTO tokenDTO) {
         if (tokenDTO == null || tokenDTO.getClientId() == null) {
-            // TODO: Modify the differences between the UserController
             return new TokenResponse();
         }
         String token = jwtService.generateToken(tokenDTO.getClientId());
