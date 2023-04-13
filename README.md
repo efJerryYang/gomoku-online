@@ -1,8 +1,10 @@
 # Gomoku Online
 
+[中文](README_zh.md)
+
 ## Introduction
 
-Gomoku Online - HITSZ Distributed Systems Course Project 1 for 2023 Spring.
+Gomoku Online - HITSZ Distributed Systems Course Project 1 in Spring 2023.
 
 ## Tech Stack
 
@@ -16,7 +18,7 @@ Gomoku Online - HITSZ Distributed Systems Course Project 1 for 2023 Spring.
 
 ### How to run
 
-Frontend is a `Vue.js` project, the built `dist` directory can be loaded by web server like `nginx`. Or you can use `npm` to run it locally as follows:
+Frontend is a `Vue.js` project, the built `dist` directory can be loaded by web server like `nginx` (but there are bugs at the moment when packaging stone images), or you can use `npm` to run it locally as follows:
 
 ```sh
 cd gomoku-online-frontend/  # Goto frontend working directory
