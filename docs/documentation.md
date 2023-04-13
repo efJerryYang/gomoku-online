@@ -1,8 +1,8 @@
 # Project Documentation
 
-## Introduction
+## Overview
 
-This documentation provides an overview of the design and implementation of the multiplayer gomoku online game that facilitates multiple players to interact in real-time. The game is accessible through the demo URL [here]() and consists of a client application implemented using `Vue.js` and a server application based on `Spring Boot`. You can also find the project at my GitHub repository [here](https://github.com/efJerryYang/gomoku-online), which provides additional installation details.
+The purpose of this documentation is to provide a comprehensive explanation of the design and implementation of the multiplayer **Gomoku Online** game, which allows multiple players to interact in real-time. The game can be accessed via the demo URL located [here](http://8.130.68.222:8081), and it is made up of a client application that was implemented using the `Vue.js` framework and a server application based on `Spring Boot`. You can also find the project at my GitHub repository [here](https://github.com/efJerryYang/gomoku-online), which provides additional installation details. The GitHub repository will not be made public before the assignment due.
 
 ## System Structure
 
@@ -20,7 +20,7 @@ The Gomoku online game is powered by a Vue app with a `App.vue` main component. 
 
 The Vue app script offers comprehensive game functionalities that cater to the user's gaming preferences. With the ability to enter their username, users can match with other players either randomly or by choice, marking the inauguration of a two-player game. Players make alternating moves by placing stones on the board, initiating interface updates, and scoreboard displays of their scores. The script employs axios for `HTTP` requests to match players and make moves, with a user's authentication token stored in local storage to enhance subsequent requests. The app also features an error update notification function that triggers if an `HTTP` request error occurs, alongside a functional aspect that allows players to initiate a new round of the game.
 
-### Server
+### Backend
 
 This backend serves as the server-side logic for a web application, and it is built on the `Spring Boot` framework. The backend provides RESTful APIs for a Gomoku online game, allowing players to match with each other, start and play games, and communicate with each other during gameplay.
 
@@ -34,4 +34,4 @@ The game's support for multiple players is enabled by allowing multiple clients 
 
 ## Conclusion
 
-
+In conclusion, this documentation has highlighted the structure, design, and implementation of the multiplayer gomoku online game. The frontend is based on a `Vue.js` framework, and the backend is built on `Spring Boot`. This game provides a seamless and engaging UI and offers an exciting and dynamic gaming experience to players. The game's support for multiple players is enabled by allowing multiple clients to connect to the server. A unique client identification system is used to enable verification and control player access. Overall, this game provides a compelling gaming experience that allows multiple players to interact in real-time.
