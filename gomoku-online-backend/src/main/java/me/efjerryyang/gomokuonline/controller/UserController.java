@@ -38,6 +38,7 @@ public class UserController {
 
     @PostMapping("/pick")
     public ResponseEntity<Object> pickUsername(@RequestHeader("Authorization") String token, @RequestBody PickDTO pickDTO) {
+        logger.info("POST /api/pick (pickDTO=" + pickDTO + ")");
         try {
             String clientId = jwtService.getClientIdFromToken(token);
             logger.info("Token: "+ token);
@@ -63,7 +64,7 @@ public class UserController {
             }
 
         } catch (JwtException | IllegalArgumentException e) {
-            logger.warn("Invalid token: ", e);
+            logger.warn("Invalid token: " + e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponsePick(null, "Invalid token"));
         }
     }
