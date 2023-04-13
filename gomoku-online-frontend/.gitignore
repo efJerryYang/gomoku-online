@@ -30,3 +30,4 @@ coverage
 *.tgz
 *.tar.gz
 *.tar
+nohup.out
