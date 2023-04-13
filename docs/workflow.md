@@ -44,20 +44,9 @@
             3. Button `match`: match with the player
             4. Scroll bar: scroll the list
             5. The list is refreshed automatically every 5 seconds.
-         6. Game block:
-            1. Text `you`: show your username
-            2. Text `opponent`: show opponent's username
-            3. Bold the name if it's the player's turn
-            4. Count down timer: show remaining time (max 30s)
-            5. Board: 15x15 grid
-               1. Click to place a stone
-               2. Background of cells are the same image placed together
-               3. Result panel: show result
-                  1. Text field `result`: show result `You: 0, Opponent: 0`
-                  2. Button `start new round`: restart the game (clear board)
-                  3. Button `exit`: exit current game (clear opponent, refresh result panel, clear board)
-                  <!-- 4. (Optional)Button `history`: goto history page -->
-      <!-- 2. (Optional) History page -->
+         6. Game block: 1. Text `you`: show your username 2. Text `opponent`: show opponent's username 3. Bold the name if it's the player's turn 4. Count down timer: show remaining time (max 30s) 5. Board: 15x15 grid 1. Click to place a stone 2. Background of cells are the same image placed together 3. Result panel: show result 1. Text field `result`: show result `You: 0, Opponent: 0` 2. Button `start new round`: restart the game (clear board) 3. Button `exit`: exit current game (clear opponent, refresh result panel, clear board)
+         <!-- 4. (Optional)Button `history`: goto history page -->
+         <!-- 2. (Optional) History page -->
 2. Backend
    1. API:
       1. `GET /api/match`: get matching list
@@ -79,5 +68,3 @@
    4. AI:
       1. (Optional) Alpha-Beta pruning
       2. (Optional) Monte Carlo tree search
-
-### Frontend development
