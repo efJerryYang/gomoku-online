@@ -16,7 +16,16 @@ export default defineConfig({
   publicPath: '/',
   server: {
     port: 8081
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: 'src/main.js'
+      }
+    },
+    optimizeDeps: {
+      include: ['axios', 'vue']
+    }
   }
-
 });
 
