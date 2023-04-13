@@ -5,6 +5,6 @@ import './assets/main.css'
 
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://localhost:8080'
+axios.defaults.baseURL = '/'
 
 createApp(App).mount('#app')

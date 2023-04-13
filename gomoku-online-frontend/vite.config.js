@@ -15,7 +15,15 @@ export default defineConfig({
   },
   publicPath: '/',
   server: {
-    port: 8081
+    host: '0.0.0.0',
+    port: 8081,
+    proxy: {
+      '/api': {
+        target: 'http://10.250.123.222:8080/',
+        changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
   },
   build: {
     rollupOptions: {
