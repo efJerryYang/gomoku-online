@@ -2,7 +2,7 @@
 
 ## Overview
 
-The purpose of this documentation is to provide a comprehensive explanation of the design and implementation of the multiplayer **Gomoku Online** game, which allows multiple players to interact in real-time. The game can be accessed via the **demo URL located [here](http://8.130.68.222:8081)**, and it is made up of a client application that was implemented using the `Vue.js` framework and a server application based on `Spring Boot`. You can also find the project at my GitHub repository [here](https://github.com/efJerryYang/gomoku-online), which provides additional installation details. The GitHub repository will not be made public until the assignment due.
+The purpose of this documentation is to provide a comprehensive explanation of the design and implementation of the multiplayer Gomoku Online game, which allows multiple players to interact in real-time. The game can be accessed via the demo **URL** located [here](http://8.130.68.222:8081), and it is made up of a client application that was implemented using the `Vue.js` framework and a server application based on `Spring Boot`. You can also find the project at my GitHub repository [here](https://github.com/efJerryYang/gomoku-online), which provides additional installation details. The GitHub repository will not be made public until the assignment due date is reached.
 
 ## System Structure
 
@@ -65,6 +65,7 @@ The game's support for multiple players is enabled by allowing multiple clients 
 ## Conclusion
 
 In conclusion, this documentation has highlighted the structure, design, and implementation of the multiplayer gomoku online game. The frontend is based on a `Vue.js` framework, and the backend is built on `Spring Boot`. This game provides a seamless and engaging UI and offers an exciting and dynamic gaming experience to players. The game's support for multiple players is enabled by allowing multiple clients to connect to the server. A unique client identification system is used to enable verification and control player access. Overall, this game provides a compelling gaming experience that allows multiple players to interact in real-time.
+
 
 ## Appendix
 
