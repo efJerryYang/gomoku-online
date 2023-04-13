@@ -13,6 +13,9 @@ import me.efjerryyang.gomokuonline.entity.User;
 import me.efjerryyang.gomokuonline.service.GameService;
 import me.efjerryyang.gomokuonline.service.JwtService;
 import me.efjerryyang.gomokuonline.service.UserService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,9 @@ import java.util.Objects;
 
 @RestController
 public class GameController {
+
+    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
+
     @Autowired
     private UserService userService;
     @Autowired
@@ -34,6 +40,7 @@ public class GameController {
 
     @PostMapping("/move")
     public ResponseEntity<GameDTO> move(@RequestHeader("Authorization") String token, @RequestBody MoveDTO moveDTO) {
+        logger.info("POST /api/move (moveDTO: " + moveDTO + ")");
         try {
             if (moveDTO == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -68,6 +75,7 @@ public class GameController {
 
     @PostMapping("/game")
     public ResponseEntity<GameDTO> getGame(@RequestHeader("Authorization") String token, @RequestBody CheckGameDTO checkGameDTO) {
+        logger.info("POST /api/game (checkGameDTO: " + checkGameDTO + ")");
         try {
             String clientId = jwtService.getClientIdFromToken(token);
             User user = userService.getUserByClientId(clientId);
@@ -104,6 +112,7 @@ public class GameController {
 
     @PostMapping("/game/new")
     public ResponseEntity<GameDTO> newGame(@RequestHeader("Authorization") String token, @RequestBody NewRoundDTO newRoundDTO) {
+        logger.info("POST /api/game/new (newRoundDTO: " + newRoundDTO + ")");
         try {
             String clientId = jwtService.getClientIdFromToken(token);
             User user = userService.getUserByClientId(clientId);
@@ -121,6 +130,7 @@ public class GameController {
 
     @PostMapping("/game/exit")
     public ResponseEntity<GameDTO> exitGame(@RequestHeader("Authorization") String token, @RequestBody CheckGameDTO checkGameDTO) {
+        logger.info("POST /api/game/exit (checkGameDTO: " + checkGameDTO + ")");
         try {
             String clientId = jwtService.getClientIdFromToken(token);
             User user = userService.getUserByClientId(clientId);
