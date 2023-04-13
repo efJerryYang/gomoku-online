@@ -26,3 +26,7 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+*.zip
+*.tgz
+*.tar.gz
+*.tar
