@@ -1,7 +1,7 @@
 server:
   error:
     path: /error
-  address: 10.250.123.222
+  address: 172.20.178.150
   port: 8080
   servlet:
     context-path: /api
