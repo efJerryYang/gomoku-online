@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This documentation provides an overview of the design and implementation of the multiplayer gomoku online game that facilitates multiple players to interact in real-time. The game is accessible through the demo URL [here]() and consists of a client application implemented using `Vue.js` and a server application based on `Spring Boot`. You can also find the project at my GitHub repository [here](https://github.com/efJerryYang/gomoku-online) (will be made public after the due), which provides additional installation details.
+This documentation provides an overview of the design and implementation of the multiplayer gomoku online game that facilitates multiple players to interact in real-time. The game is accessible through the demo URL [here]() and consists of a client application implemented using `Vue.js` and a server application based on `Spring Boot`. You can also find the project at my GitHub repository [here](https://github.com/efJerryYang/gomoku-online), which provides additional installation details.
 
 ## System Structure
 
@@ -33,3 +33,5 @@ In addition, the backend has implemented security using `Spring Security`, and u
 The game's support for multiple players is enabled by allowing multiple clients to connect to the server. A unique `jwtToken` set by previously generated `clientId` distinguishes different clients. The `JwtService` handles the verification process of clients. The server maintains a list for all users and updates their game state accordingly. The server ensures that only one client can control a player at any given time.
 
 ## Conclusion
+
+

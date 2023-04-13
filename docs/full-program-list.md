@@ -1,12 +1,18 @@
 # Program List
 
-## For running backend program
+## Installation
 
 > Only test on Linux.
 
-- java 17.0.0-tem
-- maven
-- node.js, npm, vue.js
+We use `sdkman` to manage the java and maven version.
+
+- java 17.0.6-tem
+- maven >= 3.9.0
+
+For `node.js` and `npm`, we use `nvm` as the package manager.
+
+- node >= 18.6.0
+- npm >= 8.18.0
 
 ## How to run the project
 
