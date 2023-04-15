@@ -14,3 +14,6 @@ spring:
     restart:
       enabled: true
       additional-paths: src/main/java, src/main/resources
+logging:
+  level:
+    root: debug
