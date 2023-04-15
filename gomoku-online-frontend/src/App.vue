@@ -90,6 +90,7 @@ export default {
       result: 0,
       historyScore: 'You: 0, Opponent: 0',
       gameId: null,
+      yourStone: null,
 
       showPopup: false,
       popupMessage: '',
@@ -128,6 +129,26 @@ export default {
       this.result = 0;
       this.historyScore = 'You: 0, Opponent: 0';
       this.gameId = null;
+      this.yourStone = null;
+    },
+    processGameResponse(game) {
+      this.gameId = game.id;
+      this.yourTurn = game.whoseTurn === this.id;
+      this.board = this.fillBoard(game.board);
+      this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
+      let you;
+      let opponent;
+      if (game.player1.id === this.id) {
+        you = game.player1;
+        this.yourStone = game.player1Stone;
+        opponent = game.player2;
+      } else {
+        you = game.player2;
+        this.yourStone = game.player2Stone;
+        opponent = game.player1;
+      }
+      this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
+      this.matchedPlayer = opponent;
     },
     async refreshMatchingList() {
       try {
@@ -192,21 +213,7 @@ export default {
           let game = response.data;
           console.log('logging (checkMatchingStatus):', game);
           if (game.id && game.player1 && game.player2) {
-            this.gameId = game.id;
-            this.yourTurn = game.whoseTurn === this.id;
-            this.board = this.fillBoard(game.board);
-            this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
-            let you;
-            let opponent;
-            if (game.player1.id === this.id) {
-              you = game.player1;
-              opponent = game.player2;
-            } else {
-              you = game.player2;
-              opponent = game.player1;
-            }
-            this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
-            this.matchedPlayer = opponent;
+            this.processGameResponse(game);
           }
         }
       } catch (error) {
@@ -228,21 +235,7 @@ export default {
           let game = response.data;
           console.log('logging (checkGameStatus):', game);
           if (game.id && game.player1 && game.player2) {
-            this.gameId = game.id;
-            this.yourTurn = game.whoseTurn === this.id;
-            this.board = this.fillBoard(game.board);
-            this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
-            let you;
-            let opponent;
-            if (game.player1.id === this.id) {
-              you = game.player1;
-              opponent = game.player2;
-            } else {
-              you = game.player2;
-              opponent = game.player1;
-            }
-            this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
-            this.matchedPlayer = opponent;
+            this.processGameResponse(game);
             //     // Game info
             // public static final int GAME_STATUS_PENDING = 0;
             // public static final int GAME_STATUS_PLAYING = 1;
@@ -368,21 +361,7 @@ export default {
           let game = response.data;
           console.log('logging (matchWithPlayer):', game);
           if (game.id && game.player1 && game.player2) {
-            this.gameId = game.id;
-            this.yourTurn = game.whoseTurn === this.id;
-            this.board = this.fillBoard(game.board);
-            this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
-            let you;
-            let opponent;
-            if (game.player1.id === this.id) {
-              you = game.player1;
-              opponent = game.player2;
-            } else {
-              you = game.player2;
-              opponent = game.player1;
-            }
-            this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
-            this.matchedPlayer = opponent;
+            this.processGameResponse(game);
           }
         }
       } catch (error) {
@@ -403,23 +382,10 @@ export default {
           let game = response.data;
           console.log('logging (matchWithRandomPlayer):', game);
           if (game.id && game.player1 && game.player2) {
-            this.gameId = game.id;
-            this.yourTurn = game.whoseTurn === this.id;
-            this.board = this.fillBoard(game.board);
-            this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
-            let you;
-            let opponent;
-            if (game.player1.id === this.id) {
-              you = game.player1;
-              opponent = game.player2;
-            } else {
-              you = game.player2;
-              opponent = game.player1;
-            }
-            this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
-            this.matchedPlayer = opponent;
+            this.processGameResponse(game);
           }
-        }      } catch (error) {
+        }
+      } catch (error) {
         this.notification = error.response.data.msg;
       }
     },
@@ -456,21 +422,7 @@ export default {
           let game = response.data;
           console.log('logging (startNewRound):', game);
           if (game.id && game.player1 && game.player2) {
-            this.gameId = game.id;
-            this.yourTurn = game.whoseTurn === this.id;
-            this.board = this.fillBoard(game.board);
-            this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
-            let you;
-            let opponent;
-            if (game.player1.id === this.id) {
-              you = game.player1;
-              opponent = game.player2;
-            } else {
-              you = game.player2;
-              opponent = game.player1;
-            }
-            this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
-            this.matchedPlayer = opponent;
+            this.processGameResponse(game);
           }
         }
       } catch (error) {
