@@ -146,11 +146,11 @@ public class UserController {
             return ResponseEntity.ok(new GameDTO(game));
         }
         game = userService.matchWithRandomPlayer(diceDTO.getUserId());
-        gameService.addGame(game);
         logger.info("New game" + game);
         if (game == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
+            gameService.addGame(game);
             return ResponseEntity.ok(new GameDTO(game));
         }
     }
