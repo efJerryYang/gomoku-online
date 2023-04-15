@@ -113,7 +113,11 @@ export default {
         // console.log('logging (yourTurn):', this.yourTurn);
         this.checkGameStatus();
         // else // your turn
-        this.remainingTime--;
+        if (this.result < 2) {
+          if (this.remainingTime > 0) {
+            this.remainingTime--;
+          }
+        }
       }
       console.log('logging (matchedPlayer):', this.matchedPlayer);
     }, 1000);
@@ -126,7 +130,7 @@ export default {
       this.notification = '';
       this.matchingList = [];
       this.yourTurn = false;
-      this.remainingTime = 30;
+      this.remainingTime = 60;
       this.board = [];
       this.result = 0;
       this.historyScore = 'You: 0, Opponent: 0';
@@ -136,7 +140,11 @@ export default {
     },
     processGameResponse(game) {
       this.gameId = game.id;
-      this.yourTurn = game.whoseTurn === this.id;
+      let isThisYourTurn = game.whoseTurn === this.id;
+      if (isThisYourTurn !== this.yourTurn) {
+        this.remainingTime = 60;
+      }
+      this.yourTurn = isThisYourTurn;
       this.board = this.fillBoard(game.board);
       this.notification = this.yourTurn ? 'This is your turn' : 'This is opponent\'s turn';
       let you;
@@ -398,12 +406,12 @@ export default {
     async placeStone(row, col) {
       this.warningMessage = null;
       if (this.board[row][col] === background) {
-          this.board[row][col] = this.yourTurn ? this.yourStone : background;
-          if (this.yourTurn) {
-            console.log("logging (placeStone): yourTurn:", this.yourTurn);
-            this.remainingTime = 60;
-          }
+        this.board[row][col] = this.yourTurn ? this.yourStone : background;
+        if (this.yourTurn) {
+          console.log("logging (placeStone): yourTurn:", this.yourTurn);
+          this.remainingTime = 60;
         }
+      }
       try {
         const token = await this.getJwtToken();
         const response = await axios.post('/api/move', {
