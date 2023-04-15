@@ -72,6 +72,9 @@
 
 <script>
 import axios from 'axios';
+import background from '@/assets/background.gif';
+import blackStone from '@/assets/blackStone.gif';
+import whiteStone from '@/assets/whiteStone.gif';
 
 export default {
   data() {
@@ -162,11 +165,11 @@ export default {
         const row = [];
         for (let j = 0; j < 10; j++) {
           if (responseBoard[i][j] === 0) {
-            row.push('src/assets/background.gif')
+            row.push(background);
           } else if (responseBoard[i][j] === 1) {
-            row.push('src/assets/blackStone.gif');
+            row.push(blackStone);
           } else if (responseBoard[i][j] === 2) {
-            row.push('src/assets/whiteStone.gif');
+            row.push(whiteStone);
           } else {
             row.push(null);
           }
@@ -496,7 +499,7 @@ export default {
     createEmptyBoard() {
       const board = [];
       for (let i = 0; i < 10; i++) {
-        board.push(new Array(10).fill('src/assets/background.gif'));
+        board.push(new Array(10).fill(background));
       }
       return board;
     },
@@ -658,13 +661,6 @@ export default {
   max-height: 100%;
 }
 
-.board .cell.white {
-  background-image: url('src/assets/whiteStone.gif');
-}
-
-.board .cell.black {
-  background-image: url('src/assets/blackStone.gif');
-}
 
 .result-panel {
   display: flex;
