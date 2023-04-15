@@ -129,7 +129,7 @@ public class GameService {
         game.getBoard()[move.getX()][move.getY()] = game.getPlayerStoneType(move.getPlayer());
         logger.info("(turn=" + game.getTurn() + ") " + "Player " + move.getPlayer().getUsername() + " move to " + move.getX() + ", " + move.getY());
         // check if game end
-        Integer gameStatus = checkGameStatus(game);
+        Integer gameStatus = checkGameStatus(game, move);
         game.setTurn(game.getTurn() + 1);
 
         if (gameStatus != Constant.GAME_STATUS_PLAYING) {
@@ -173,6 +173,44 @@ public class GameService {
                         return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
                     }
                     if (i - 4 >= 0 && j + 4 < Constant.BOARD_SIZE && board[i - 1][j + 1] == playerStone && board[i - 2][j + 2] == playerStone && board[i - 3][j + 3] == playerStone && board[i - 4][j + 4] == playerStone) {
+                        return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
+                    }
+                }
+            }
+        }
+        if (turn == Constant.BOARD_SIZE * Constant.BOARD_SIZE) {
+            return Constant.GAME_STATUS_IT_IS_A_TIE;
+        }
+        return Constant.GAME_STATUS_PLAYING;
+    }
+
+
+    public Integer checkGameStatus(Game game, Move lastMove) {
+        logger.info("checkGameStatus: " + game);
+        Integer[][] board = game.getBoard();
+        Integer turn = game.getTurn();
+        Integer whoFirst = game.getWhoFirst();
+        Integer playerNumber = game.getNowTurnPlayerNumber();
+        Integer playerStone = game.getPlayerStoneType(game.getPlayer(playerNumber));
+        int row = lastMove.getX();
+        int col = lastMove.getY();
+        int minRow = Math.max(0, row - 4);
+        int maxRow = Math.min(Constant.BOARD_SIZE - 1, row + 4);
+        int minCol = Math.max(0, col - 4);
+        int maxCol = Math.min(Constant.BOARD_SIZE - 1, col + 4);
+        for (int i = minRow; i <= maxRow; i++) {
+            for (int j = minCol; j <= maxCol; j++) {
+                if (Objects.equals(board[i][j], playerStone)) {
+                    if (i + 4 <= maxRow && board[i + 1][j] == playerStone && board[i + 2][j] == playerStone && board[i + 3][j] == playerStone && board[i + 4][j] == playerStone) {
+                        return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
+                    }
+                    if (j + 4 <= maxCol && board[i][j + 1] == playerStone && board[i][j + 2] == playerStone && board[i][j + 3] == playerStone && board[i][j + 4] == playerStone) {
+                        return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
+                    }
+                    if (i + 4 <= maxRow && j + 4 <= maxCol && board[i + 1][j + 1] == playerStone && board[i + 2][j + 2] == playerStone && board[i + 3][j + 3] == playerStone && board[i + 4][j + 4] == playerStone) {
+                        return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
+                    }
+                    if (i - 4 >= minRow && j + 4 <= maxCol && board[i - 1][j + 1] == playerStone && board[i - 2][j + 2] == playerStone && board[i - 3][j + 3] == playerStone && board[i - 4][j + 4] == playerStone) {
                         return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
                     }
                 }
