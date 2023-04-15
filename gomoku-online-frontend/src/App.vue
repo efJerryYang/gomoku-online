@@ -403,7 +403,19 @@ export default {
             Authorization: `Bearer ${token}`
           }
         });
-        // TODO: Seems no need to get the response
+        // place a stone directly to better user experience
+        // should do validation of the stone position
+        // only position that is empty can be placed
+        if (this.board[row][col] === 0) {
+          this.board[row][col] = this.yourTurn ? this.yourStone : 0;
+        }
+        if (response.status === 200) {
+          let game = response.data;
+          console.log('logging (placeStone):', game);
+          if (game.id && game.player1 && game.player2) {
+            this.processGameResponse(game);
+          }
+        }
       } catch (error) {
         console.error(error);
       }
