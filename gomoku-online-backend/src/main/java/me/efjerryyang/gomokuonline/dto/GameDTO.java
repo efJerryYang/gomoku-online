@@ -17,6 +17,8 @@ public class GameDTO {
     private Long whoseTurn;
     private Integer[][] board;
     private Integer result;
+    private Integer player1Stone;
+    private Integer player2Stone;
 
     public GameDTO(Game game) {
         this.id = game.getId();
@@ -26,5 +28,7 @@ public class GameDTO {
         this.whoseTurn = game.getTurn() % 2 == (game.getWhoFirst() % 2) ? player1.getId() : player2.getId();
         this.board = game.getBoard();
         this.result = game.getStatus();
+        this.player1Stone = game.getPlayerStoneType(player1);
+        this.player2Stone = game.getPlayerStoneType(player2);
     }
 }
