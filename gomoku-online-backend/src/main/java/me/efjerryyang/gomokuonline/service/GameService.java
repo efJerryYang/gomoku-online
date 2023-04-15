@@ -116,7 +116,7 @@ public class GameService {
     }
 
     public Integer checkTimeout(Game game, Move move) {
-        logger.info("checkTimeout: " + game + " " + move);
+        logger.info("checkTimeout (move): " + game + " " + move);
         int gameStatus = Constant.GAME_STATUS_PLAYING;
         // check timeout caused end
         if (game.getTurn() > 2) {
@@ -131,6 +131,27 @@ public class GameService {
             if (move.getMoveTime() - game.getRoundCreatedTime() > Constant.GAME_TIMEOUT_MS + Constant.GAME_TIMEOUT_EPSILON_MS) {
                 gameStatus = Objects.equals(game.getPlayer1(), move.getPlayer()) ? Constant.GAME_STATUS_PLAYER2_WIN : Constant.GAME_STATUS_PLAYER1_WIN;
                 logger.info("Player " + move.getPlayer().getUsername() + " timeout");
+            }
+        }
+        return gameStatus;
+    }
+
+    public Integer checkTimeout(Game game, Long checkTime, Player player) {
+        logger.info("checkTimeout (checkTime): " + game + " " + checkTime);
+        int gameStatus = Constant.GAME_STATUS_PLAYING;
+        // check timeout caused end
+        if (game.getTurn() > 2) {
+            Move opponentMove = game.getMoves().get(game.getMoves().size() - 2);
+            if (checkTime - opponentMove.getMoveTime() > Constant.GAME_TIMEOUT_MS + Constant.GAME_TIMEOUT_EPSILON_MS) {
+                // player timeout, opponent win
+                gameStatus = Objects.equals(game.getPlayer1(), player) ? Constant.GAME_STATUS_PLAYER2_WIN : Constant.GAME_STATUS_PLAYER1_WIN;
+                logger.info("Player " + player.getUsername() + " timeout");
+            }
+        } else {
+            // use round created time to check timeout
+            if (checkTime - game.getRoundCreatedTime() > Constant.GAME_TIMEOUT_MS + Constant.GAME_TIMEOUT_EPSILON_MS) {
+                gameStatus = Objects.equals(game.getPlayer1(), player) ? Constant.GAME_STATUS_PLAYER2_WIN : Constant.GAME_STATUS_PLAYER1_WIN;
+                logger.info("Player " + player.getUsername() + " timeout");
             }
         }
         return gameStatus;
@@ -156,6 +177,10 @@ public class GameService {
 
         game.setTurn(game.getTurn() + 1);
 
+        updateScores(game, gameStatus);
+    }
+
+    public void updateScores(Game game, Integer gameStatus) {
         if (gameStatus != Constant.GAME_STATUS_PLAYING) {
             game.setStatus(gameStatus);
             System.out.print("Game end: ");

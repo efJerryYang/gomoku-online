@@ -30,5 +30,5 @@ public class Constant {
     public static final int GAME_STATUS_PLAYER2_WIN = 4;
     public static final int GAME_EXIT = 5;
     public static final long GAME_TIMEOUT_MS = MINUTE_TO_SECONDS * 1000;
-    public static final long GAME_TIMEOUT_EPSILON_MS = 3000;
+    public static final long GAME_TIMEOUT_EPSILON_MS = 1000;
 }
