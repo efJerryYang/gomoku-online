@@ -81,22 +81,36 @@ public class GameController {
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
+
             Game game = gameService.getGameById(checkGameDTO.getGameId());
             if (game == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
+
+            GameDTO gameDTO = new GameDTO(game);
+            Player player = game.getPlayerByPlayerId(user.getId());
+            if (game.getStatus() == Constant.GAME_STATUS_PLAYING && gameDTO.getWhoseTurn().equals(user.getId())) {
+                // if it is the user's turn, check if his turn is timed out
+                Integer gameStatus = gameService.checkTimeout(game, System.currentTimeMillis(), player);
+                game.setStatus(gameStatus);
+                gameService.updateScores(game, gameStatus);
+            }
+
             switch (game.getStatus()) {
                 case Constant.GAME_STATUS_PENDING -> logger.info("Game is waiting for another player");
+                case Constant.GAME_STATUS_PLAYING -> logger.info("Game is playing");
                 case Constant.GAME_STATUS_PLAYER1_WIN, Constant.GAME_STATUS_PLAYER2_WIN, Constant.GAME_STATUS_IT_IS_A_TIE -> {
                     logger.info("Game is over");
                     // try finding another pending game
-                    Player player = game.getPlayerByPlayerId(user.getId());
                     Game newGame = gameService.findAndJoinPendingGame(player);
                     logger.info("New game: " + newGame);
                     return ResponseEntity.ok().body(new GameDTO(Objects.requireNonNullElse(newGame, game)));
                 }
                 case Constant.GAME_EXIT -> {
                     return ResponseEntity.ok().build();
+                }
+                default -> {
+                    logger.warn("Game status is not valid: " + game.getStatus());
                 }
             }
             return ResponseEntity.ok().body(new GameDTO(game));
