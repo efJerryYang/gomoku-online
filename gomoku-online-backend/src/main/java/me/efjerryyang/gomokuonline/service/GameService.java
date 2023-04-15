@@ -177,39 +177,6 @@ public class GameService {
         }
     }
 
-    public Integer checkGameStatus(Game game) {
-
-        logger.info("checkGameStatus: " + game);
-        Integer[][] board = game.getBoard();
-        Integer turn = game.getTurn();
-        Integer whoFirst = game.getWhoFirst();
-        Integer playerNumber = game.getNowTurnPlayerNumber();
-        Integer playerStone = game.getPlayerStoneType(game.getPlayer(playerNumber));
-        for (int i = 0; i < Constant.BOARD_SIZE; i++) {
-            for (int j = 0; j < Constant.BOARD_SIZE; j++) {
-                if (Objects.equals(board[i][j], playerStone)) {
-                    if (i + 4 < Constant.BOARD_SIZE && board[i + 1][j] == playerStone && board[i + 2][j] == playerStone && board[i + 3][j] == playerStone && board[i + 4][j] == playerStone) {
-                        return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
-                    }
-                    if (j + 4 < Constant.BOARD_SIZE && board[i][j + 1] == playerStone && board[i][j + 2] == playerStone && board[i][j + 3] == playerStone && board[i][j + 4] == playerStone) {
-                        return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
-                    }
-                    if (i + 4 < Constant.BOARD_SIZE && j + 4 < Constant.BOARD_SIZE && board[i + 1][j + 1] == playerStone && board[i + 2][j + 2] == playerStone && board[i + 3][j + 3] == playerStone && board[i + 4][j + 4] == playerStone) {
-                        return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
-                    }
-                    if (i - 4 >= 0 && j + 4 < Constant.BOARD_SIZE && board[i - 1][j + 1] == playerStone && board[i - 2][j + 2] == playerStone && board[i - 3][j + 3] == playerStone && board[i - 4][j + 4] == playerStone) {
-                        return playerNumber + Constant.GAME_STATUS_IT_IS_A_TIE;
-                    }
-                }
-            }
-        }
-        if (turn == Constant.BOARD_SIZE * Constant.BOARD_SIZE) {
-            return Constant.GAME_STATUS_IT_IS_A_TIE;
-        }
-        return Constant.GAME_STATUS_PLAYING;
-    }
-
-
     public Integer checkGameStatus(Game game, Move lastMove) {
         logger.info("checkGameStatus: " + game);
         Integer gameStatus = checkTimeout(game, lastMove);
