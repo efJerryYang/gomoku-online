@@ -658,13 +658,6 @@ export default {
   max-height: 100%;
 }
 
-.board .cell.white {
-  background-image: url('src/assets/whiteStone.gif');
-}
-
-.board .cell.black {
-  background-image: url('src/assets/blackStone.gif');
-}
 
 .result-panel {
   display: flex;
