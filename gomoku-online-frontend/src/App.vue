@@ -110,10 +110,10 @@ export default {
         }
       } else {
         // if (!this.yourTurn) // opponent's turn
-        console.log('logging (yourTurn):', this.yourTurn);
+        // console.log('logging (yourTurn):', this.yourTurn);
         this.checkGameStatus();
         // else // your turn
-        // this.remainingTime--;
+        this.remainingTime--;
       }
       console.log('logging (matchedPlayer):', this.matchedPlayer);
     }, 1000);
@@ -143,11 +143,11 @@ export default {
       let opponent;
       if (game.player1.id === this.id) {
         you = game.player1;
-        this.yourStone = game.player1Stone;
+        this.yourStone = game.player1Stone === 1 ? blackStone : whiteStone;
         opponent = game.player2;
       } else {
         you = game.player2;
-        this.yourStone = game.player2Stone;
+        this.yourStone = game.player2Stone === 1 ? blackStone : whiteStone;
         opponent = game.player1;
       }
       this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
@@ -397,6 +397,13 @@ export default {
 
     async placeStone(row, col) {
       this.warningMessage = null;
+      if (this.board[row][col] === background) {
+          this.board[row][col] = this.yourTurn ? this.yourStone : background;
+          if (this.yourTurn) {
+            console.log("logging (placeStone): yourTurn:", this.yourTurn);
+            this.remainingTime = 60;
+          }
+        }
       try {
         const token = await this.getJwtToken();
         const response = await axios.post('/api/move', {
@@ -412,9 +419,6 @@ export default {
         // place a stone directly to better user experience
         // should do validation of the stone position
         // only position that is empty can be placed
-        if (this.board[row][col] === 0) {
-          this.board[row][col] = this.yourTurn ? this.yourStone : 0;
-        }
         if (response.status === 200) {
           let game = response.data;
           console.log('logging (placeStone):', game);
