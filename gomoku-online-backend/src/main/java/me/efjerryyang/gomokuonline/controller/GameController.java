@@ -54,10 +54,10 @@ public class GameController {
             if (game.getStatus() != Constant.GAME_STATUS_PLAYING) {
                 // if not playing, cannot move
                 switch (game.getStatus()) {
-                    case Constant.GAME_STATUS_PENDING -> System.out.println("Game is waiting for another player");
-                    case Constant.GAME_STATUS_PLAYER1_WIN -> System.out.println("Game is over, player 1 win");
-                    case Constant.GAME_STATUS_PLAYER2_WIN -> System.out.println("Game is over, player 2 win");
-                    case Constant.GAME_STATUS_IT_IS_A_TIE -> System.out.println("Game is over, it is a tie");
+                    case Constant.GAME_STATUS_PENDING -> logger.info("Game is waiting for another player");
+                    case Constant.GAME_STATUS_PLAYER1_WIN -> logger.info("Game is over, player 1 win");
+                    case Constant.GAME_STATUS_PLAYER2_WIN -> logger.info("Game is over, player 2 win");
+                    case Constant.GAME_STATUS_IT_IS_A_TIE -> logger.info("Game is over, it is a tie");
                 }
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
@@ -66,7 +66,7 @@ public class GameController {
             // update game
             gameService.updateGameMove(game, move);
             // return updated game board.
-            System.out.println("Player 1: " + game.getPlayer1().getScore() + " Player 2: " + game.getPlayer2().getScore());
+            logger.info("Player 1: " + game.getPlayer1().getScore() + " Player 2: " + game.getPlayer2().getScore());
             return ResponseEntity.ok().body(new GameDTO(game));
         } catch (JwtException | IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -87,22 +87,18 @@ public class GameController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
             switch (game.getStatus()) {
-                case Constant.GAME_STATUS_PENDING -> System.out.println("Game is waiting for another player");
+                case Constant.GAME_STATUS_PENDING -> logger.info("Game is waiting for another player");
                 case Constant.GAME_STATUS_PLAYER1_WIN, Constant.GAME_STATUS_PLAYER2_WIN, Constant.GAME_STATUS_IT_IS_A_TIE -> {
-                    System.out.println("Game is over");
+                    logger.info("Game is over");
                     // try finding another pending game
                     Player player = game.getPlayerByPlayerId(user.getId());
                     Game newGame = gameService.findAndJoinPendingGame(player);
-                    System.out.println("New game: " + newGame);
+                    logger.info("New game: " + newGame);
                     return ResponseEntity.ok().body(new GameDTO(Objects.requireNonNullElse(newGame, game)));
                 }
                 case Constant.GAME_EXIT -> {
                     return ResponseEntity.ok().build();
                 }
-            }
-            System.out.println("Show game list:");
-            for (Game game1 : gameService.getGameList()) {
-                System.out.println(game1);
             }
             return ResponseEntity.ok().body(new GameDTO(game));
         } catch (JwtException | IllegalArgumentException e) {

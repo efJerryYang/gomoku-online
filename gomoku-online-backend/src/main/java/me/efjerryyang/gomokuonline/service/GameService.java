@@ -5,28 +5,36 @@ import me.efjerryyang.gomokuonline.entity.Game;
 import me.efjerryyang.gomokuonline.entity.Move;
 import me.efjerryyang.gomokuonline.entity.Player;
 import me.efjerryyang.gomokuonline.entity.User;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class GameService {
+    private static final Logger logger = LoggerFactory.getLogger(GameService.class);
     private final List<Game> gameList;
 
     public GameService() {
+        logger.info("GameService initialized");
         this.gameList = new LinkedList<>();
     }
 
     public void addGame(Game game) {
+        logger.info("addGame: " + game);
         gameList.add(game);
     }
 
     public List<Game> getGameList() {
+        logger.info("getGameList: " + gameList);
         return gameList;
     }
 
     public Game findAndJoinPendingGame(Player player) {
-        // try finding pending game for player
+        logger.info("findAndJoinPendingGame: " + player);
+        // Try finding pending game for player
         // namely, either player1 or player2 should be player
         Game game = gameList.stream()
                 .filter(g -> g.getStatus().equals(Constant.GAME_STATUS_PENDING))
@@ -40,6 +48,7 @@ public class GameService {
     }
 
     public Game createGame(User user1, User user2) {
+        logger.info("createGame: " + user1 + " " + user2);
         Game game = new Game();
         game.setId((long) (Math.random() * 1_0000_0000));
         game.setPlayer1(new Player(user1.getUsername(), user1.getId(), 0));
@@ -56,14 +65,15 @@ public class GameService {
         game.setStatus(Constant.GAME_STATUS_PENDING);
         game.setWhoFirst((int) (Math.random() * 2) + 1); // (int) [1.0, 3.0) => 1 or 2
         switch (game.getWhoFirst()) {
-            case 1 -> System.out.println("Player " + game.getPlayer1().getUsername() + " goes first");
-            case 2 -> System.out.println("Player " + game.getPlayer2().getUsername() + " goes first");
+            case 1 -> logger.info("Player " + game.getPlayer1().getUsername() + " goes first");
+            case 2 -> logger.info("Player " + game.getPlayer2().getUsername() + " goes first");
         }
         game.setMoves(new ArrayList<>());
         return game;
     }
 
     public Game createGame(Player player1, Player player2, Integer whoFirst) {
+        logger.info("createGame: " + player1 + " " + player2 + " " + whoFirst);
         Game game = new Game();
         game.setId((long) (Math.random() * 1_0000_0000));
 
@@ -86,22 +96,27 @@ public class GameService {
     }
 
     public Game getGameById(Long id) {
+        logger.info("getGameById: " + id);
         return gameList.stream().filter(game -> game.getId().equals(id)).findFirst().orElse(null);
     }
 
     public void removeGameById(Long id) {
+        logger.info("removeGameById: " + id);
         gameList.removeIf(game -> game.getId().equals(id));
     }
 
     public Game getGameByPlayerId(Long id) {
+        logger.info("getGameByPlayerId: " + id);
         return gameList.stream().filter(game -> game.getPlayer1().getId().equals(id) || game.getPlayer2().getId().equals(id)).findFirst().orElse(null);
     }
 
     public void updateGameStatus(Long id, Integer status) {
+        logger.info("updateGameStatus: " + id + " " + status);
         gameList.stream().filter(game -> game.getId().equals(id)).findFirst().ifPresent(game -> game.setStatus(status));
     }
 
     public void updateGameMove(Game game, Move move) {
+        logger.info("updateGameMove: " + game + " " + move);
         // validate the move
         if (game.getBoard()[move.getX()][move.getY()] != 0) {
             return;
@@ -113,7 +128,7 @@ public class GameService {
         // update game move
         game.getMoves().add(move);
         game.getBoard()[move.getX()][move.getY()] = game.getPlayerStoneType(move.getPlayer());
-        System.out.println("(turn=" + game.getTurn() + ") " + "Player " + move.getPlayer().getUsername() + " move to " + move.getX() + ", " + move.getY());
+        logger.info("(turn=" + game.getTurn() + ") " + "Player " + move.getPlayer().getUsername() + " move to " + move.getX() + ", " + move.getY());
         // check if game end
         Integer gameStatus = checkGameStatus(game);
         game.setTurn(game.getTurn() + 1);
@@ -124,22 +139,23 @@ public class GameService {
             switch (gameStatus) {
                 case Constant.GAME_STATUS_PLAYER1_WIN -> {
                     game.getPlayer1().setScore(game.getPlayer1().getScore() + 1);
-                    System.out.println("Player 1 win (" + game.getPlayer1().getUsername() + ")");
+                    logger.info("Player 1 win (" + game.getPlayer1().getUsername() + ")");
                 }
                 case Constant.GAME_STATUS_PLAYER2_WIN -> {
                     game.getPlayer2().setScore(game.getPlayer2().getScore() + 1);
-                    System.out.println("Player 2 win (" + game.getPlayer2().getUsername() + ")");
+                    logger.info("Player 2 win (" + game.getPlayer2().getUsername() + ")");
                 }
                 case Constant.GAME_STATUS_IT_IS_A_TIE -> {
                     game.getPlayer1().setScore(game.getPlayer1().getScore() + 1);
                     game.getPlayer2().setScore(game.getPlayer2().getScore() + 1);
-                    System.out.println("It is a tie");
+                    logger.info("It is a tie");
                 }
             }
         }
     }
 
     public Integer checkGameStatus(Game game) {
+        logger.info("checkGameStatus: " + game);
         Integer[][] board = game.getBoard();
         Integer turn = game.getTurn();
         Integer whoFirst = game.getWhoFirst();
@@ -170,6 +186,7 @@ public class GameService {
     }
 
     public void exitGame(Game game) {
+        logger.info("exitGame: " + game);
         game.setStatus(Constant.GAME_EXIT);
     }
 
