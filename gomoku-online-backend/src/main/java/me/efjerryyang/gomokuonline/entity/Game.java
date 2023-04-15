@@ -22,6 +22,7 @@ public class Game {
     private Integer status;
     private Integer whoFirst;
     private List<Move> moves;
+    private Long roundCreatedTime;
 
     public Player getOpponentByPlayerId(Long playerId) {
         if (Objects.equals(playerId, player1.getId())) {
