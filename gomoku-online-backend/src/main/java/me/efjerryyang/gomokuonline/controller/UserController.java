@@ -96,6 +96,7 @@ public class UserController {
         if (opponent == null) {
             return ResponseEntity.ok(new GameDTO());
         } else {
+            game.setRoundCreatedTime(System.currentTimeMillis());
             game.setStatus(Constant.GAME_STATUS_PLAYING);
             logger.info("Game status changed to playing: " + game);
             return ResponseEntity.ok(new GameDTO(game));
@@ -113,6 +114,7 @@ public class UserController {
         logger.info("Current game of the given user: " + game);
         if (game != null && game.getStatus().equals(Constant.GAME_STATUS_PENDING)) {
             // another player checked the matching status first
+            game.setRoundCreatedTime(System.currentTimeMillis());
             game.setStatus(Constant.GAME_STATUS_PLAYING);
             logger.info("Game status changed to playing: " + game);
             return ResponseEntity.ok(new GameDTO(game));
@@ -139,6 +141,7 @@ public class UserController {
         Game game = gameService.getGameByPlayerId(diceDTO.getUserId()); // What does this use for?
         logger.info("Current game of the given user: " + game);
         if (game != null && game.getStatus().equals(Constant.GAME_STATUS_PENDING)) {
+            game.setRoundCreatedTime(System.currentTimeMillis());
             game.setStatus(Constant.GAME_STATUS_PLAYING);
             return ResponseEntity.ok(new GameDTO(game));
         }
