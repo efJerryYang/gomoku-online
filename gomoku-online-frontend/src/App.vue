@@ -86,7 +86,7 @@ export default {
       notification: '',
       matchingList: [],
       yourTurn: false,
-      remainingTime: 30,
+      remainingTime: 60,
       board: [], // Initialize board with empty array of 10x10
       result: 0,
       historyScore: 'You: 0, Opponent: 0',
@@ -186,9 +186,10 @@ export default {
       // 1 -> blackStone.gif
       // 2 -> whiteStone.gif
       const board = [];
-      for (let i = 0; i < 10; i++) {
+      const boardSize = responseBoard.length;
+      for (let i = 0; i < boardSize; i++) {
         const row = [];
-        for (let j = 0; j < 10; j++) {
+        for (let j = 0; j < boardSize; j++) {
           if (responseBoard[i][j] === 0) {
             row.push(background);
           } else if (responseBoard[i][j] === 1) {
@@ -469,13 +470,6 @@ export default {
       } catch (error) {
         console.error(error);
       }
-    },
-    createEmptyBoard() {
-      const board = [];
-      for (let i = 0; i < 10; i++) {
-        board.push(new Array(10).fill(background));
-      }
-      return board;
     },
     /* Add API calls for getting history list and history info */
   },
