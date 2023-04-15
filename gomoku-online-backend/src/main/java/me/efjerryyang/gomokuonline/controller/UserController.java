@@ -12,7 +12,6 @@ import me.efjerryyang.gomokuonline.entity.User;
 import me.efjerryyang.gomokuonline.service.GameService;
 import me.efjerryyang.gomokuonline.service.JwtService;
 import me.efjerryyang.gomokuonline.service.UserService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ import java.util.List;
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    
+
     @Autowired
     private UserService userService;
 
@@ -41,8 +40,8 @@ public class UserController {
         logger.info("POST /api/pick (pickDTO=" + pickDTO + ")");
         try {
             String clientId = jwtService.getClientIdFromToken(token);
-            logger.info("Token: "+ token);
-            logger.info("Client ID: "+ clientId);
+            logger.info("Token: " + token);
+            logger.info("Client ID: " + clientId);
             if (pickDTO == null || pickDTO.getUsername() == null) {
                 logger.warn("Invalid PickDTO or Username.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponsePick(null, "Username cannot be null"));
