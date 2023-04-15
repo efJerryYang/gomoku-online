@@ -247,18 +247,18 @@ export default {
             // public static final int GAME_STATUS_PLAYER1_WIN = 3;
             // public static final int GAME_STATUS_PLAYER2_WIN = 4;
             // public static final int GAME_STATUS = 5;
-            if (result > 1) {
-              if (result === 2) {
+            if (this.result > 1) {
+              if (this.result === 2) {
                 this.notification = 'It is a tie';
-              } else if (result === 3 && this.id === game.player1.id) {
+              } else if (this.result === 3 && this.id === game.player1.id) {
                 this.notification = 'You won!';
-              } else if (result === 4 && this.id === game.player2.id) {
+              } else if (this.result === 4 && this.id === game.player2.id) {
                 this.notification = 'You won!';
-              } else if (result === 3 && this.id === game.player2.id) {
+              } else if (this.result === 3 && this.id === game.player2.id) {
                 this.notification = 'You lost...';
-              } else if (result === 4 && this.id === game.player1.id) {
+              } else if (this.result === 4 && this.id === game.player1.id) {
                 this.notification = 'You lost...';
-              } else if (result === 5) {
+              } else if (this.result === 5) {
                 this.init()
               }
             }
