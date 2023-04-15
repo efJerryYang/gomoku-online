@@ -41,6 +41,7 @@ public class GameService {
                 .findFirst()
                 .orElse(null);
         if (game != null) {
+            game.setRoundCreatedTime(System.currentTimeMillis());
             game.setStatus(Constant.GAME_STATUS_PLAYING);
         }
         return game;
@@ -114,6 +115,27 @@ public class GameService {
         gameList.stream().filter(game -> game.getId().equals(id)).findFirst().ifPresent(game -> game.setStatus(status));
     }
 
+    public Integer checkTimeout(Game game, Move move) {
+        logger.info("checkTimeout: " + game + " " + move);
+        int gameStatus = Constant.GAME_STATUS_PLAYING;
+        // check timeout caused end
+        if (game.getTurn() > 2) {
+            Move opponentMove = game.getMoves().get(game.getMoves().size() - 2);
+            if (move.getMoveTime() - opponentMove.getMoveTime() > Constant.GAME_TIMEOUT_MS + Constant.GAME_TIMEOUT_EPSILON_MS) {
+                // player timeout, opponent win
+                gameStatus = Objects.equals(game.getPlayer1(), move.getPlayer()) ? Constant.GAME_STATUS_PLAYER2_WIN : Constant.GAME_STATUS_PLAYER1_WIN;
+                logger.info("Player " + move.getPlayer().getUsername() + " timeout");
+            }
+        } else {
+            // use round created time to check timeout
+            if (move.getMoveTime() - game.getRoundCreatedTime() > Constant.GAME_TIMEOUT_MS + Constant.GAME_TIMEOUT_EPSILON_MS) {
+                gameStatus = Objects.equals(game.getPlayer1(), move.getPlayer()) ? Constant.GAME_STATUS_PLAYER2_WIN : Constant.GAME_STATUS_PLAYER1_WIN;
+                logger.info("Player " + move.getPlayer().getUsername() + " timeout");
+            }
+        }
+        return gameStatus;
+    }
+
     public void updateGameMove(Game game, Move move) {
         logger.info("updateGameMove: " + game + " " + move);
         // validate the move
@@ -129,7 +151,9 @@ public class GameService {
         game.getBoard()[move.getX()][move.getY()] = game.getPlayerStoneType(move.getPlayer());
         logger.info("(turn=" + game.getTurn() + ") " + "Player " + move.getPlayer().getUsername() + " move to " + move.getX() + ", " + move.getY());
         // check if game end
+
         Integer gameStatus = checkGameStatus(game, move);
+
         game.setTurn(game.getTurn() + 1);
 
         if (gameStatus != Constant.GAME_STATUS_PLAYING) {
@@ -154,6 +178,7 @@ public class GameService {
     }
 
     public Integer checkGameStatus(Game game) {
+
         logger.info("checkGameStatus: " + game);
         Integer[][] board = game.getBoard();
         Integer turn = game.getTurn();
@@ -187,6 +212,10 @@ public class GameService {
 
     public Integer checkGameStatus(Game game, Move lastMove) {
         logger.info("checkGameStatus: " + game);
+        Integer gameStatus = checkTimeout(game, lastMove);
+        if (gameStatus != Constant.GAME_STATUS_PLAYING) {
+            return gameStatus;
+        }
         Integer[][] board = game.getBoard();
         Integer turn = game.getTurn();
         Integer whoFirst = game.getWhoFirst();
