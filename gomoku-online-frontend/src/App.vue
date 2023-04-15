@@ -34,7 +34,7 @@
     <div class="game" v-else>
       <div class="board">
         <div class="result-panel">
-          <div class="result">{{ historyScore }}</div>
+          <div class="score-panel">{{ historyScore }}</div>
         </div>
         <div class="status">
           <div class="you" :class="yourTurn ? 'bold' : ''">You: {{ username }}</div>
@@ -47,6 +47,7 @@
           </div>
         </div>
         <div class="result-panel">
+          <div class="message">{{ warningMessage }}</div>
           <div class="result">{{ notification }}</div>
           <div class="buttons">
             <button @click="startNewRound"> Start New Round </button>
@@ -91,6 +92,7 @@ export default {
       historyScore: 'You: 0, Opponent: 0',
       gameId: null,
       yourStone: null,
+      warningMessage: null,
 
       showPopup: false,
       popupMessage: '',
@@ -130,6 +132,7 @@ export default {
       this.historyScore = 'You: 0, Opponent: 0';
       this.gameId = null;
       this.yourStone = null;
+      this.warningMessage = null;
     },
     processGameResponse(game) {
       this.gameId = game.id;
@@ -149,6 +152,7 @@ export default {
       }
       this.historyScore = `You: ${you.score}, Opponent: ${opponent.score}`;
       this.matchedPlayer = opponent;
+      this.result = game.result;
     },
     async refreshMatchingList() {
       try {
@@ -243,18 +247,18 @@ export default {
             // public static final int GAME_STATUS_PLAYER1_WIN = 3;
             // public static final int GAME_STATUS_PLAYER2_WIN = 4;
             // public static final int GAME_STATUS = 5;
-            if (game.result > 1) {
-              if (game.result === 2) {
+            if (result > 1) {
+              if (result === 2) {
                 this.notification = 'It is a tie';
-              } else if (game.result === 3 && this.id === game.player1.id) {
+              } else if (result === 3 && this.id === game.player1.id) {
                 this.notification = 'You won!';
-              } else if (game.result === 4 && this.id === game.player2.id) {
+              } else if (result === 4 && this.id === game.player2.id) {
                 this.notification = 'You won!';
-              } else if (game.result === 3 && this.id === game.player2.id) {
+              } else if (result === 3 && this.id === game.player2.id) {
                 this.notification = 'You lost...';
-              } else if (game.result === 4 && this.id === game.player1.id) {
+              } else if (result === 4 && this.id === game.player1.id) {
                 this.notification = 'You lost...';
-              } else if (game.result === 5) {
+              } else if (result === 5) {
                 this.init()
               }
             }
@@ -391,6 +395,7 @@ export default {
     },
 
     async placeStone(row, col) {
+      this.warningMessage = null;
       try {
         const token = await this.getJwtToken();
         const response = await axios.post('/api/move', {
@@ -421,6 +426,11 @@ export default {
       }
     },
     async startNewRound() {
+      console.log("logging (startNewRound):", this.result, this.gameId);
+      if (this.result === 0 || this.result === 1) {
+        this.warningMessage = 'You cannot start a new round when playing!';
+        return;
+      }
       try {
         const token = await this.getJwtToken();
         const response = await axios.post('/api/game/new', {
@@ -634,9 +644,17 @@ export default {
   margin-top: 20px;
 }
 
+.score-panel {
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
 .result {
   font-size: 24px;
   margin-bottom: 30px;
+  /* color: red;  */
+  font-weight: bold;
+  /**yellow */
 }
 
 .result-panel button {
