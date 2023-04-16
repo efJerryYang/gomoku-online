@@ -405,12 +405,10 @@ export default {
 
     async placeStone(row, col) {
       this.warningMessage = null;
-      if (this.board[row][col] === background) {
-        this.board[row][col] = this.yourTurn ? this.yourStone : background;
-        if (this.yourTurn) {
-          console.log("logging (placeStone): yourTurn:", this.yourTurn);
-          this.remainingTime = 60;
-        }
+      if (this.board[row][col] === background && this.yourTurn && this.result === 1) {
+        this.board[row][col] = this.yourStone;
+        console.log("logging (placeStone): yourTurn:", this.yourTurn);
+        this.remainingTime = 60;
       }
       try {
         const token = await this.getJwtToken();
