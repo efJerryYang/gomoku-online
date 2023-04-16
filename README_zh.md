@@ -26,7 +26,7 @@
 
 ### 如何运行
 
-前端是一个 `Vue.js` 项目，通过 `npm run build` 打包产生的 `dist` 目录可以由 `nginx` 这种服务器加载（不过当前打包时棋子的图像解析有点问题），或者你可以使用 `npm` 在本地运行它，如下所示：
+前端是一个 `Vue.js` 项目，通过 `npm run build` 打包产生的 `dist` 目录可以由 `nginx` 这种服务器加载，或者你可以使用 `npm` 在本地运行它，如下所示：
 
 ```sh
 cd gomoku-online-frontend/  # 切换到前端的工作目录下
