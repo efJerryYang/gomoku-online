@@ -8,11 +8,11 @@ Gomoku Online - HITSZ Distributed Systems Course Project 1 in Spring 2023.
 
 See `docs/` for more details:
 
-- `setup-and-run-the-project`: Detailed setup guide for the project.
-- `documentation.md`: Documentation for the project.
-- `documentation-appendix.md`: Appendix for the documentation (includes demo).
-- `workflow.md`: Draft design of the workflow.
-- `debugging.md`: Debugging notes.
+- [setup-and-run-the-project](docs/setup-and-run-the-project.md): Detailed setup guide for the project.
+- [documentation.md](docs/documentation.md): Documentation for the project.
+- [documentation-appendix.md](docs/documentation-appendix.md): Appendix for the documentation (includes demo).
+- [workflow.md](docs/workflow.md): Draft design of the workflow.
+- [debugging.md](docs/debugging.md): Debugging notes.
 
 ## Tech Stack
 
