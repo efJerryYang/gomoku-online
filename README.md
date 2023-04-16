@@ -12,7 +12,7 @@ See `docs/` for more details:
 - [documentation.md](docs/documentation.md): Documentation for the project.
 - [documentation-appendix.md](docs/documentation-appendix.md): Appendix for the documentation (includes demo).
 - [workflow.md](docs/workflow.md): Draft design of the workflow.
-- [debugging.md](docs/debugging.md): Debugging notes.
+- [debugging-notes.md](docs/debugging-notes.md): Debugging notes.
 
 ## Tech Stack
 
