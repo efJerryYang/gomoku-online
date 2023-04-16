@@ -26,7 +26,7 @@ See `docs/` for more details:
 
 ### How to run
 
-Frontend is a `Vue.js` project, the built `dist` directory can be loaded by web server like `nginx` (but there are bugs at the moment when packaging stone images), or you can use `npm` to run it locally as follows:
+Frontend is a `Vue.js` project, the built `dist` directory can be loaded by web server like `nginx`, or you can use `npm` to run it locally as follows:
 
 ```sh
 cd gomoku-online-frontend/  # Goto frontend working directory
