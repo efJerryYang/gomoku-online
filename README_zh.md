@@ -12,7 +12,7 @@
 - [documentation.md](docs/documentation.md): 项目文档。
 - [documentation-appendix.md](docs/documentation-appendix.md): 文档的附录（包括演示）。
 - [workflow.md](docs/workflow.md): 工作流程的草稿设计。
-- [debugging.md](docs/debugging.md): 调试笔记。
+- [debugging-notes.md](docs/debugging-notes.md): 调试笔记。
 
 ## 技术栈
 
