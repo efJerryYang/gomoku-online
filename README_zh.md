@@ -8,11 +8,11 @@
 
 请参阅 `docs/` 目录下的文档：
 
-- `setup-and-run-the-project`: 详细的项目设置指南。
-- `documentation.md`: 项目文档。
-- `documentation-appendix.md`: 文档的附录（包括演示）。
-- `workflow.md`: 工作流程的草稿设计。
-- `debugging.md`: 调试笔记。
+- [setup-and-run-the-project](docs/setup-and-run-the-project.md): 详细的项目设置指南。
+- [documentation.md](docs/documentation.md): 项目文档。
+- [documentation-appendix.md](docs/documentation-appendix.md): 文档的附录（包括演示）。
+- [workflow.md](docs/workflow.md): 工作流程的草稿设计。
+- [debugging.md](docs/debugging.md): 调试笔记。
 
 ## 技术栈
 
