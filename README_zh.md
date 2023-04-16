@@ -47,3 +47,7 @@ mvn clean package  # 为后端项目构建一个可执行的 jar 文件
 ```sh
 java -jar gomoku-online-<version>.jar # 直接运行发布的 jar 文件
 ```
+
+## 参考资料
+
+- 参考自这个在线五子棋游戏的功能：[Play Gomoku Online](https://gomokuonline.com/)
