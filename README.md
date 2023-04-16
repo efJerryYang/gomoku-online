@@ -47,3 +47,7 @@ Alternatively, you can directly run the released `jar` binary in the following w
 ```sh
 java -jar gomoku-online-<version>.jar # Run the jar file
 ```
+
+## Reference
+
+- Inspired by the online gomoku game: [Play Gomoku Online](https://gomokuonline.com/)
