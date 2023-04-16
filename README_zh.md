@@ -6,6 +6,14 @@
 
 在线五子棋 - 哈尔滨工业大学（深圳）(HITSZ) 分布式系统课程项目 1， 2023 年春季
 
+请参阅 `docs/` 目录下的文档：
+
+- `setup-and-run-the-project`: 详细的项目设置指南。
+- `documentation.md`: 项目文档。
+- `documentation-appendix.md`: 文档的附录（包括演示）。
+- `workflow.md`: 工作流程的草稿设计。
+- `debugging.md`: 调试笔记。
+
 ## 技术栈
 
 | 技术栈                                                | 描述                                                                                               |
