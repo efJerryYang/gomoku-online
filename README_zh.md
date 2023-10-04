@@ -1,6 +1,6 @@
 # 在线五子棋
 
-[English](README.md)
+[English](./README.md) | [中文](./README_zh.md)
 
 ## 简介
 
